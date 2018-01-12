@@ -1,5 +1,5 @@
 # To convert to md use this command (org export doesn't work with nested lists:)
-# pandoc --from org --to markdown_github  README_json0.org  -s -o README_json0.md
+# pandoc --from org --to markdown_github  Readme0.org -s -o Readme0.md
 #+OPTIONS: toc:nil
 #+OPTIONS: ^:nil
 
@@ -10,7 +10,9 @@
   CalculiX user defined heat source file, =dflux.f= for defining the heat source for welding steps.
 
 ** Required software
-   - The geometry and mesh is generated using [[http://www.salome-platform.org/][Salome platform]]
-   - The thrmomechanical simulation of the welding process is performed with the open source [[http://www.dhondt.de/][CalculiX FEA solver]]
+   - The geometry and mesh is generated using [[http://www.salome-platform.org/][Salome platform]] (version 8.2.0)
+   - The thrmomechanical simulation of the welding process is performed with the open source [[http://www.dhondt.de/][CalculiX FEA solver]] (version 2.12)
 ** Instructions
-   Instructions for running the files are in =docs/Instruction_flow.pdf= 
+   Instructions for running the files are in =docs/Instruction_flow.pdf=
+** Authors
+   The modules are created by [[https://ewi.org/][EWI]]

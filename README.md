@@ -6,10 +6,15 @@ This repository contains the modules for automatically creating the files requir
 Required software
 -----------------
 
--   The geometry and mesh is generated using [Salome platform](http://www.salome-platform.org/)
--   The thrmomechanical simulation of the welding process is performed with the open source [CalculiX FEA solver](http://www.dhondt.de/)
+-   The geometry and mesh is generated using [Salome platform](http://www.salome-platform.org/) (version 8.2.0)
+-   The thrmomechanical simulation of the welding process is performed with the open source [CalculiX FEA solver](http://www.dhondt.de/) (version 2.12)
 
 Instructions
 ------------
 
 Instructions for running the files are in `docs/Instruction_flow.pdf`
+
+Authors
+-------
+
+The modules are created by [EWI](https://ewi.org/)
