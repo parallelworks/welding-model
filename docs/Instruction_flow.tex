@@ -1,0 +1,148 @@
+% Created 2018-01-11 Thu 23:57
+\documentclass[12pt,letterpaper]{article}
+\usepackage{graphicx,rotating,overpic,eepic,amssymb,amsmath,color,wasysym,hyperref,soul}
+%\usepackage[backend=biber,natbib=true,style=numeric,sorting=none,firstinits=true,maxbibnames=15]{biblatex}
+\usepackage[numbers]{natbib} 
+%\bibliography{libraryFixed}
+\usepackage{longtable}
+\usepackage{xspace}
+\usepackage{float}% hello ;)
+\newcommand{\commentt}[1]{}
+\newcommand{\Rey}{\mbox{\textit{Re}}}  % Reynolds number
+\newcommand{\ReyRBC}{\Rey_\mathrm{RBC}}  % Reynolds number
+\newcommand{\mum}{$\mu$m\xspace}
+\newcommand{\muL}{$\mu$L\xspace}
+\newcommand{\capi}{\mathrm{Ca}}
+\newcommand{\gdot}{\dot{\gamma}}
+\newcommand{\etal}{et al.\,}
+\newcommand{\invs}{~s$^{-1}$\xspace}
+\usepackage[usenames,dvipsnames,svgnames,x11names,table]{xcolor}
+%\usepackage[latin1]{inputenc}
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows}
+
+%\usepackage{psfrag,pstricks}
+%\addtolength{\oddsidemargin}{-.675in}
+%\addtolength{\evensidemargin}{-.675in}
+%\addtolength{\textwidth}{1.35in}
+
+\addtolength{\topmargin}{-.675in}
+\addtolength{\textheight}{1.35in}
+\topmargin -1.5cm        % read Lamport p.163
+\oddsidemargin -0.04cm   % read Lamport p.163
+\evensidemargin -0.04cm  % same as oddsidemargin but for left-hand pages
+\textwidth 16.59cm
+\textheight 21.94cm 
+%\pagestyle{empty}       % Uncomment if don't want page numbers
+\parskip 7.2pt           % sets spacing between paragraphs
+\renewcommand{\baselinestretch}{1.0} 	% Uncomment for 1.5 spacing between lines
+\parindent 0pt		  % sets leading space for paragraphs
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{fixltx2e}
+\usepackage[font=small,labelfont=bf,margin=10pt]{caption}
+\hypersetup{
+  pdfborderstyle={/S/U/W 1},
+  pdfborder={0 0 100},
+  pdfkeywords={},
+  pdfsubject={},
+  pdfcreator={Emacs 24.1.1 (Org mode 8.1.2)}} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{fixltx2e}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{marvosym}
+\usepackage{wasysym}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\tolerance=1000
+% To change the background color of verbatim sections in latex
+\colorlet{LightSteelBlue10}{LightSteelBlue1!50}
+\colorlet{SteelBlue40}{SteelBlue4!60!black}
+\newcommand{\verbStyle}[1]{{\color{SteelBlue40}\colorbox{LightSteelBlue10}{{#1}}}}
+\let\OldTexttt\texttt
+\renewcommand{\texttt}[1]{\OldTexttt{\verbStyle{#1}}}
+\author{Yu-Ping Yang}
+\date{December 20, 2017}
+\title{Instructions}
+\hypersetup{
+ pdfauthor={Yu-Ping Yang},
+ pdftitle={Instructions},
+ pdfkeywords={},
+ pdfsubject={},
+ pdfcreator={Emacs 24.3.1 (Org mode 8.3.1)}, 
+ pdflang={English}}
+\begin{document}
+
+\maketitle
+\begin{itemize}
+\item The following five files will be output from the interface (under \texttt{inputs/} directory):
+\begin{itemize}
+\item \texttt{eweld.in}
+\item \texttt{eweld\_weld\_parameters.in}
+\item \texttt{eweld\_boundary\_condition.in}
+\item \texttt{eweld\_preheat\_interpass\_temperature.in}
+\item \texttt{eweld\_temperature\_monitor.in}
+\item \texttt{eweld\_mesh\_key.txt} (Not need to do now. This option will allow users to input their own meshes. )
+\end{itemize}
+
+\item For automatic mesh, the following steps will be run:
+\begin{enumerate}
+\item Check if \texttt{pass\_coordinates.out} exists in \texttt{input} directory, if no, run \\
+\texttt{determine\_passes\_arc\_v4.exe} to create \texttt{pass\_coordinates.out}\footnote{On linux, compile      \texttt{determine\_passes\_arc\_v4.out}, to get \texttt{determine\_passes\_arc\_v4.out} via \texttt{gfortran determine\_passes\_arc\_v4.for -o determine\_passes\_arc\_v4.out}}. 
+\texttt{eweld.in} will be input.
+\item Run \texttt{Automesh\_v14.py} with SALOME to create \texttt{Mesh\_3D.unv}
+\begin{enumerate}
+\item The files will be input:
+\begin{itemize}
+\item \texttt{./inputs/eweld.in}
+\item \texttt{./inputs/eweld\_weld\_parameters.in}
+\item \texttt{./setting/Setting\_arc\_efficiency\_dfault.in}
+\end{itemize}
+\item The files will be output: 
+\begin{itemize}
+\item \texttt{Mesh\_3D.unv}
+\item \texttt{model\_dflux.for}
+\item \texttt{model\_step.in}
+\end{itemize}
+\end{enumerate}
+\item Run 
+\begin{verbatim}
+python unv2calculix.py Mesh_3D.unv Model3d
+\end{verbatim}
+\texttt{Model3d.inp} will be created.
+\item Run 
+\begin{verbatim}
+python Analysis_file_create.py
+\end{verbatim}
+\begin{itemize}
+\item The files will be input:
+\begin{itemize}
+\item \texttt{./inputs/eweld.in}
+\item \texttt{eweld\_boundary\_condition.in}
+\item \texttt{eweld\_preheat\_interpass\_temperature.in}
+\end{itemize}
+\item The files will be output:
+\begin{itemize}
+\item \texttt{model\_bc.in}
+\item \texttt{model\_ele4.in}
+\item \texttt{model\_ele6.in}
+\item \texttt{model\_ele8.in}
+\item \texttt{model\_film.in} (not now)
+\item \texttt{model\_group.in}
+\item \texttt{model\_ini\_temperature.in}
+\item \texttt{model\_material.in}
+\item \texttt{model\_node.in}
+\end{itemize}
+\end{itemize}
+\item Moving \texttt{model\_dflux.for} to the Calculix directory and rename to \texttt{dflux.f}
+\item Run \texttt{analysis.inp} with calculix
+\end{enumerate}
+\end{itemize}
+\end{document}

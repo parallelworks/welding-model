@@ -10,7 +10,7 @@
 #+Author: Yu-Ping Yang
 #+Date: December 20, 2017
 
-- The following five files will be output from the interface:
+- The following five files will be output from the interface (under =inputs/= directory):
   + =eweld.in=
   + =eweld_weld_parameters.in=
   + =eweld_boundary_condition.in=
@@ -19,8 +19,8 @@
   + =eweld_mesh_key.txt= (Not need to do now. This option will allow users to input their own meshes. )
 
 - For automatic mesh, the following steps will be run:
-  1. Check if =pass_coordinates.out= exists in "input" directory, if no, run \\ 
-	 =determine_passes_arc_v4.exe= to create =pass_coordinates.out=.
+  1. Check if =pass_coordinates.out= exists in =input= directory, if no, run \\ 
+	 =determine_passes_arc_v4.exe= to create =pass_coordinates.out=[fn:1]. 
 	 =eweld.in= will be input.
   2. Run =Automesh_v14.py= with SALOME to create =Mesh_3D.unv=
 	 1) The files will be input:
@@ -56,3 +56,9 @@
 	   - =model_node.in=
   5. Moving =model_dflux.for= to the Calculix directory and rename to =dflux.f=
   6. Run =analysis.inp= with calculix
+
+* Footnotes
+
+[fn:1] On linux, compile 	 =determine_passes_arc_v4.out=, to get =determine_passes_arc_v4.out= via =gfortran determine_passes_arc_v4.for -o determine_passes_arc_v4.out=
+
+
