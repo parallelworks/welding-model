@@ -1,0 +1,35 @@
+*Plate length (inch)
+12.0
+*Plate thickness (inch)
+0.5
+*Plate width (inch)
+5,5
+*Material
+X65,X65
+*FillerMaterial
+ER70S-6
+*Weld process
+GMAW
+*Weld Reinforcement (inch)
+0.06
+*Weld penetration (inch)
+0.08
+*Weld root gap value
+0.04
+*Tolerance for point Coordinate(inch)
+0.04
+*Weld mesh size (inch)
+0.1
+*Weld layer total
+3
+*Weld layer, Number of passes
+1,1
+2,2
+3,4
+*Joint Type (if pipe, adding one line for diameter)
+Plate
+*Groove dimensions
+V-groove
+0.1
+60
+*END

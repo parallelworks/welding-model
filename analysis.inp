@@ -1,0 +1,102 @@
+*************************************************************************************
+**** Master analysis file for Calculix
+****
+**** Limitation: analysis is only for solid model 
+****
+*************************************************************************************
+*HEADING  
+ Welding Analysis 
+*PREPRINT, MODEL=YES, ECHO=NO, HISTORY=NO 
+*********------------- Node Coordinates -------------- ******************************
+****
+**** Example for "model_node.in"
+**** 1,            -30.508,               12.7,                0.0
+**** 2,            -30.508,               12.7,             -304.8
+**** 3,            -30.508,               12.7,          -298.3149
+**** ...
+****
+*NODE, SYSTEM=R,NSET=ALLND,INPUT=model_node.in  
+********-------------- Element Connectivity ------------*****************************
+****
+**** Example for "model_ele4.in"
+**** 2109,     36085,     34685,     12736,     13247
+**** 2110,     34685,     36085,     12736,     33384
+**** 2111,     34784,     36954,     34581,     34008
+**** ...
+**** Example for "model_ele6.in"
+**** 102369,     33068,     33107,     33108,     32409,     32410,     32408
+**** 102370,     32792,     32864,     32865,     32098,     32164,     32165
+**** 102371,     32712,     32707,     32708,     32021,     32019,     32020
+**** ...
+**** Example for "model_ele8.in"
+**** 4,      414,      456,      422,      423,      846,      849,      852,      855
+**** 5,      846,      849,      852,      855,      847,      850,      853,      856
+**** 6,      847,      850,      853,      856,      848,      851,      854,      857
+**** ...
+*ELEMENT,TYPE=C3D4,ELSET=C3D4
+*INCLUDE,INPUT=model_ele4.in  
+*ELEMENT,TYPE=C3D6,ELSET=C3D6
+*INCLUDE,INPUT=model_ele6.in  
+*ELEMENT,TYPE=C3D8R,ELSET=C3D8
+*INCLUDE,INPUT=model_ele8.in  
+********-------------- Element and Node Group ------------***************************
+**** Element and Node Group
+****
+**** Example for "model_group.in"
+****
+**** *ELSET,ELSET=PART_A1
+**** 1,       2,       3,       4,       5,       6,       7,       8
+**** 9,      10,      11,      12,      13,      14,      15,      16
+**** ...
+**** *ELSET,ELSET=WP1
+**** 9220,    9221,    9222,    9223,    9224,    9225,    9226,    9227
+**** 9228,    9229,    9230,    9231,    9232,    9233,    9234,    9235
+**** 9236,    9237,    9238,    9239,    9240,    9241,    9242,    9243
+**** ...
+****
+*INCLUDE,INPUT=model_group.in 
+**********---------- Material Properties ------------------*************************
+****
+**** Example for "model_material.in"
+****
+****
+**** *ELSET,ELSET=MAT1
+****  PART_A1,PART_A2,PART_A3,...
+**** *ELSET,ELSET=MAT2
+****  PART_B1,PART_B2,PART_B3,...
+**** *ELSET,ELSET=WELD
+****  WP1,WP2,WP3,...
+****
+**** *SOLID SECTION,ELSET=MAT1,MATERIAL=X65
+**** *MATERIAL,NAME=X65
+**** *INCLUDE,INPUT=Material_X65.in
+****
+**** *SOLID SECTION,ELSET=MAT2,MATERIAL=DH36
+**** *MATERIAL,NAME=DH36
+**** *INCLUDE,INPUT=Material_X65.in
+****
+**** *SOLID SECTION,ELSET=WELD,MATERIAL=X65
+**** *MATERIAL,NAME=X65
+**** *INCLUDE,INPUT=Material_X65.in
+****
+*INCLUDE,INPUT=model_material.in
+**********-------- Mechancial Boundary Conditions---------**************************
+****
+**** Example for "model_bc.in"
+****
+**** *BOUNDARY,OP=NEW
+**** XYZFIX,1,3
+****  YZFIX,2,3 
+****   ZFIX,3,3
+*INCLUDE,INPUT=model_bc.in
+**********-------- Initial Temperature------------------****************************
+****
+**** Example for "model_ini_temperature.in"
+****
+**** *INITIAL CONDITIONS,TYPE=TEMP
+****  ALLND,25.
+****  
+*INCLUDE,INPUT=model_ini_temperature.in
+**********--------------------- Steps ------------------****************************
+*RESTART,WRITE,FREQ=50,OVERLAY
+*INCLUDE,INPUT=model_step.in

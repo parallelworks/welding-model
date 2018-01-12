@@ -1,0 +1,48 @@
+
+The following five files will be output from the interface:
+•	eweld.in 
+•	eweld_weld_parameters.in
+•	eweld_boundary_condition.in 
+•	eweld_preheat_interpass_temperature.in 
+•	eweld_temperature_monitor.in 
+
+eweld_mesh_key.txt – Not need to do now. This option will allow users to input their own meshes. 
+
+For automatic mesh, the following steps will be run:
+
+1. Check if [pass_coordinates.out] exists in "input" directory, if no, run [determine_passes_arc_v4.exe] to create [pass_coordinates.out]
+   
+   a. eweld.in will be input.
+
+2. Run Automesh_v14.py with SALOME to create Mesh_3D.unv
+   
+   a. The files will be input: 
+   		/inputs/eweld.in; 
+   		eweld_weld_parameters.in;
+   		/setting/Setting_arc_efficiency_dfault.in.
+   
+   b. The files will be output: 
+   		Mesh_3D.unv; 
+   		model_dflux.for;
+   		model_step.in
+
+3. python unv2calculix.py Mesh_3D.unv Model3d
+   
+   a. Model3d.inp will be created. 
+
+4. python Analysis_file_create.py
+   a. The files will be input: /inputs/eweld.in;eweld_boundary_condition.in;eweld_preheat_interpass_temperature.in
+   b. the files will be output:
+   		model_bc.in
+   		model_ele4.in
+   		model_ele6.in
+   		model_ele8.in
+   		model_film.in (not now)
+   		model_group.in
+   		model_ini_temperature.in
+   		model_material.in
+   		model_node.in
+ 
+ 5. Moving model_dflux.for to the Calculix directory and rename to dflux.f
+ 
+ 6. Run analysis.inp with calculix
