@@ -54,7 +54,7 @@
 	   - =model_ini_temperature.in=
 	   - =model_material.in=
 	   - =model_node.in=
-  5. Moving =model_dflux.for= to the Calculix directory and rename to =dflux.f=
+  5. Move =model_dflux.for= to the Calculix directory and rename to =dflux.f=, and compile CalculiX
   6. Run =analysis.inp= with calculix
 
 * Footnotes
