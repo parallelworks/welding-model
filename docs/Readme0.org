@@ -16,3 +16,5 @@
    Instructions for running the files are in =docs/Instruction_flow.pdf=
 ** Authors
    The modules are created by [[https://ewi.org/][EWI]]
+** License
+   This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
