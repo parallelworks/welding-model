@@ -1,0 +1,58 @@
+#+LaTeX_CLASS: article-mine
+#+LATEX_HEADER: % To change the background color of verbatim sections in latex
+#+LATEX_HEADER: \colorlet{LightSteelBlue10}{LightSteelBlue1!50}
+#+LATEX_HEADER: \colorlet{SteelBlue40}{SteelBlue4!60!black}
+#+LATEX_HEADER: \newcommand{\verbStyle}[1]{{\color{SteelBlue40}\colorbox{LightSteelBlue10}{{#1}}}}
+#+LATEX_HEADER: \let\OldTexttt\texttt
+#+LATEX_HEADER: \renewcommand{\texttt}[1]{\OldTexttt{\verbStyle{#1}}}
+#+OPTIONS: toc:nil
+#+TITLE: Instructions 
+#+Author: Yu-Ping Yang
+#+Date: December 20, 2017
+
+- The following five files will be output from the interface:
+  + =eweld.in=
+  + =eweld_weld_parameters.in=
+  + =eweld_boundary_condition.in=
+  + =eweld_preheat_interpass_temperature.in=
+  + =eweld_temperature_monitor.in=
+  + =eweld_mesh_key.txt= (Not need to do now. This option will allow users to input their own meshes. )
+
+- For automatic mesh, the following steps will be run:
+  1. Check if =pass_coordinates.out= exists in "input" directory, if no, run \\ 
+	 =determine_passes_arc_v4.exe= to create =pass_coordinates.out=.
+	 =eweld.in= will be input.
+  2. Run =Automesh_v14.py= with SALOME to create =Mesh_3D.unv=
+	 1) The files will be input:
+		- =./inputs/eweld.in=
+		- =./inputs/eweld_weld_parameters.in=
+		- =./setting/Setting_arc_efficiency_dfault.in=
+	 2) The files will be output: 
+		- =Mesh_3D.unv=
+		- =model_dflux.for=
+		- =model_step.in=
+  3. Run 
+	 #+BEGIN_EXAMPLE
+	 python unv2calculix.py Mesh_3D.unv Model3d
+	 #+END_EXAMPLE
+	 =Model3d.inp= will be created.
+  4. Run 
+	 #+BEGIN_EXAMPLE
+	 python Analysis_file_create.py
+	 #+END_EXAMPLE
+	 + The files will be input:
+	   - =./inputs/eweld.in=
+	   - =eweld_boundary_condition.in=
+	   - =eweld_preheat_interpass_temperature.in=
+	 + The files will be output:
+	   - =model_bc.in=
+	   - =model_ele4.in=
+	   - =model_ele6.in=
+	   - =model_ele8.in=
+	   - =model_film.in= (not now)
+	   - =model_group.in=
+	   - =model_ini_temperature.in=
+	   - =model_material.in=
+	   - =model_node.in=
+  5. Moving =model_dflux.for= to the Calculix directory and rename to =dflux.f=
+  6. Run =analysis.inp= with calculix
