@@ -17,6 +17,8 @@ import glob
 import math
 from math import *
 
+import data_IO
+
 logfile = open( "AutoMesh.log", "w" )
 
 cwd=os.getcwd() 
@@ -611,6 +613,8 @@ pt = [[[],]*1000]*nweld
 
 textLine = bead_data.readline()
 textLine = bead_data.readline()
+print(bead_file)
+print(textLine)
 layer = int(textLine)
 logfile.write("Number of layer = " + str(layer) +'\n')
     
@@ -999,20 +1003,39 @@ elif os.name == 'nt':
    tc_file=cwd + "\inputs/eweld_temperature_monitor.in"  
 
 tc_pt = [[[],]*2]*100
+
 if(os.path.isfile(tc_file)==True):
-   logfile.write('Temperature monitoring points' +'\n') 
+   #   logfile.write('Temperature monitoring points' +'\n')
    tc_data = open(tc_file, 'r')
-   textLine = tc_data.readline()
-   ntc=int(textLine)
+   ntc = data_IO.read_int_from_file_line_offset(tc_data, "*Number of moniter points")
+
    for iii in range(ntc):
-       textLine = tc_data.readline()
-       dataline = textLine.split( ',' )     
-       (xt,yt)=map(float,dataline)    
-       tc_pt[iii]=[xt*25.4,yt*25.4] 
-       so=(str(iii)+','+str(tc_pt[iii]))
+       points = data_IO.read_floats_from_file_line_offset(tc_data,"*X, Y, Z", ',', iii)
+       xt = points[0]
+       yt = points[1]
+       tc_pt[iii] = [xt * 25.4, yt * 25.4]
+       so = (str(iii) + ',' + str(tc_pt[iii]))
        logfile.write(so +'\n')
-   #end for  
    tc_data.close()
+
+# Deosn't work ...
+# if(os.path.isfile(tc_file)==True):
+#    logfile.write('Temperature monitoring points' +'\n')
+#    tc_data = open(tc_file, 'r')
+#    textLine = tc_data.readline()
+#    textLine = tc_data.readline()
+#    ntc=int(textLine)
+#    textLine = tc_data.readline()
+#    for iii in range(ntc):
+#        textLine = tc_data.readline()
+#        dataline = textLine.split( ',' )
+#        print(dataline)
+#        (xt,yt)=map(float,dataline)
+#        tc_pt[iii]=[xt*25.4,yt*25.4]
+#        so=(str(iii)+','+str(tc_pt[iii]))
+#        logfile.write(so +'\n')
+#    #end for
+#    tc_data.close()
 
    for iii in range(ntc):    
        if(tc_pt[iii][1] < ymin_part):   
@@ -2478,6 +2501,6 @@ if os.path.isfile('Mesh_3D_old.unv'):
 if os.path.isfile('Mesh_3D.unv'):
     os.rename('Mesh_3D.unv', 'Mesh_3D_old.unv')
 try:
-  Mesh_1.ExportUNV( r'C:/SALOME/SALOME-8.2.0-WIN64/WORK/Mesh_3D.unv' )
+  Mesh_1.ExportUNV( cwd+'/Mesh_3D.unv' )
 except:
   print 'ExportUNV() failed. Invalid file name?'
