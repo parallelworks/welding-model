@@ -1,4 +1,4 @@
-% Created 2018-01-12 Fri 00:24
+% Created 2018-01-19 Fri 19:38
 \documentclass[12pt,letterpaper]{article}
 \usepackage{graphicx,rotating,overpic,eepic,amssymb,amsmath,color,wasysym,hyperref,soul}
 %\usepackage[backend=biber,natbib=true,style=numeric,sorting=none,firstinits=true,maxbibnames=15]{biblatex}
@@ -114,9 +114,13 @@
 \end{enumerate}
 \item Run 
 \begin{verbatim}
-python unv2calculix.py Mesh_3D.unv Model3d
+python2 tools/unv2calculix.py Mesh_3D.unv Model3d
 \end{verbatim}
 \texttt{Model3d.inp} will be created.
+\item To generate the \texttt{model\_film.in} file (using cgx and unical), run:
+\begin{verbatim}
+./createFilm.sh
+\end{verbatim}
 \item Run 
 \begin{verbatim}
 python Analysis_file_create.py
@@ -134,7 +138,7 @@ python Analysis_file_create.py
 \item \texttt{model\_ele4.in}
 \item \texttt{model\_ele6.in}
 \item \texttt{model\_ele8.in}
-\item \texttt{model\_film.in} (not now)
+\item \texttt{model\_film.in}
 \item \texttt{model\_group.in}
 \item \texttt{model\_ini\_temperature.in}
 \item \texttt{model\_material.in}

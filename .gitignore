@@ -1,3 +1,6 @@
 /*~
 /inputs/determine_passes/build/
 /inputs/determine_passes/dist/
+/.idea/
+*.pyc
+/test-film-vgroove/

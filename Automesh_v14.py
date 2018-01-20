@@ -1597,6 +1597,12 @@ if myGrooveType.find('V-groove') != -1 :
    Pobject = geompy.MakeCDG(Face_A3)
    A3_FaceMid = geompy.PointCoordinates(Pobject)
 
+   # Create a vector based on Vertex_A11 for defining a plane for a cooling surface in
+   # mesh step
+   coolingPlane = geompy.MakePlane(Vertex_A11, OY, 500)
+   geompy.addToStudy( coolingPlane, 'coolingPlane')
+
+
 elif myGrooveType.find('Compound-bevel') != -1 :
    for i in range(num_part_A-1):
        s.Line(point1=part_A_pt[i], point2=part_A_pt[i+1])
@@ -2414,6 +2420,17 @@ smesh.SetName(PA1_extruded, 'PA1_extruded')
 #smesh.SetName(PB2_top, 'PB2_top')
 #smesh.SetName(PB3_top, 'PB3_top')
 
+# Create a group of faces that are located on the top plane for the convective/film
+aCriteria = []
+aCriterion = smesh.GetCriterion(SMESH.FACE,SMESH.FT_BelongToPlane,SMESH.FT_Undefined,
+                                'coolingPlane')
+aCriteria.append(aCriterion)
+aFilter_1 = smesh.GetFilterFromCriteria(aCriteria)
+aFilter_1.SetMesh(Mesh_1.GetMesh())
+FilmSurface = Mesh_1.GroupOnFilter( SMESH.FACE, 'FilmSurface', aFilter_1 )
+smesh.SetName(FilmSurface, 'FilmSurface')
+
+
 groupAll = [ PA1_1, PA2_1, PA3_1, PB3_1, PB2_1, PB1_1, PA2_extruded, PA2_top, PA3_extruded, PA3_top, PB3_extruded, PB3_top, PB2_extruded, PB2_top, PB1_extruded, PB1_top, PA1_extruded, PA1_top ]
 
 for k in range(nweld):
@@ -2427,20 +2444,18 @@ for k in range(nweld):
     [ WE, WT ] = Mesh_1.ExtrusionSweepObjects( [], [], [ WD ], [ 0, 0, -eleSizeTravel ], numEleLen, 1 )
     smesh.SetName(WE, 'WP'+ str(k+1) + '_extruded')
     smesh.SetName(WT, 'WP'+ str(k+1) + '_top')
-#end for
 
 for k in range(nweld):   
     WPt = Mesh_1.GroupOnGeom(WP[k+1],'WP' + str(k+1) +'ST',SMESH.NODE)
-#end for
 
-Group_face = Mesh_1.CreateEmptyGroup( SMESH.FACE, 'Group_face' )
-nbAdd = Group_face.AddFrom( Mesh_1.GetMesh() )
-#Group_face.Clear()
-Group_face_ElemIDs = Group_face.GetListOfID()
-print len(Group_face_ElemIDs)
-for i in range(len(Group_face_ElemIDs)+1):
-    ele= Group_face.GetID(i)
-    Mesh_1.RemoveElements([ele])
+# Group_face = Mesh_1.CreateEmptyGroup( SMESH.FACE, 'Group_face' )
+# nbAdd = Group_face.AddFrom( Mesh_1.GetMesh() )
+# #Group_face.Clear()
+# Group_face_ElemIDs = Group_face.GetListOfID()
+# print len(Group_face_ElemIDs)
+# for i in range(len(Group_face_ElemIDs)+1):
+#     ele= Group_face.GetID(i)
+#     Mesh_1.RemoveElements([ele])
 
 Group_edge = Mesh_1.CreateEmptyGroup( SMESH.EDGE, 'Group_edge' )
 nbAdd = Group_edge.AddFrom( Mesh_1.GetMesh() )
