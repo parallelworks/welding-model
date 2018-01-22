@@ -1,4 +1,4 @@
-% Created 2018-01-21 Sun 21:29
+% Created 2018-01-22 Mon 09:44
 \documentclass[12pt,letterpaper]{article}
 \usepackage{graphicx,rotating,overpic,eepic,amssymb,amsmath,color,wasysym,hyperref,soul}
 %\usepackage[backend=biber,natbib=true,style=numeric,sorting=none,firstinits=true,maxbibnames=15]{biblatex}
@@ -95,19 +95,25 @@
 \item For automatic mesh, the following steps will be run:
 \begin{enumerate}
 \item Check if \texttt{pass\_coordinates.out} exists in \texttt{input} directory, if no, run \\
-\texttt{utils/determine\_passes\_arc\_v4.exe} to create \texttt{inputs/pass\_coordinates.out}\footnote{On linux, compile      \texttt{determine\_passes\_arc\_v4.out}, to get \texttt{determine\_passes\_arc\_v4.out} via \texttt{gfortran determine\_passes\_arc\_v4.for -o determine\_passes\_arc\_v4.out}}:
+\texttt{utils/determine\_passes\_arc\_v4.exe} to create \texttt{inputs/pass\_coordinates.out}\footnote{On Linux, compile      \texttt{determine\_passes\_arc\_v4.out}, to get \texttt{determine\_passes\_arc\_v4.out} via \texttt{gfortran determine\_passes\_arc\_v4.for -o determine\_passes\_arc\_v4.out}}:
 \begin{verbatim}
 ./utils/determine_passes_arc_v4.out inputs/
 \end{verbatim}
 \texttt{eweld.in} will be input.
-\item Run \texttt{Automesh\_v14.py} with SALOME to create \texttt{Mesh\_3D.unv}
+\item Run \texttt{utils/Automesh\_v14.py} from SALOME's Python Console to create \texttt{Mesh\_3D.unv}, or run 
+without Salome GUI:
+\begin{verbatim}
+$SALOMEPATH/salome start -t -w 1 utils/Automesh_v14.py
+\end{verbatim}
 \begin{enumerate}
 \item The files will be input:
 \begin{itemize}
 \item \texttt{./inputs/eweld.in}
 \item \texttt{./inputs/eweld\_weld\_parameters.in}
 \item \texttt{./setting/Setting\_arc\_efficiency\_dfault.in}
+\item \texttt{./inputs/pass\_coordinates.out}
 \end{itemize}
+
 \item The files will be output: 
 \begin{itemize}
 \item \texttt{Mesh\_3D.unv}
@@ -148,8 +154,8 @@ python Analysis_file_create.py
 \item \texttt{model\_node.in}
 \end{itemize}
 \end{itemize}
-\item Move \texttt{model\_dflux.for} to the Calculix directory and rename to \texttt{dflux.f}, and compile CalculiX
-\item Run \texttt{analysis.inp} with calculix
+\item Move \texttt{model\_dflux.for} to the CalculiX directory and rename to \texttt{dflux.f}, and compile CalculiX
+\item Run \texttt{analysis.inp} with CalculiX
 \end{enumerate}
 \end{itemize}
 \end{document}

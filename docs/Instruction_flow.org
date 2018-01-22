@@ -25,7 +25,11 @@
 	 ./utils/determine_passes_arc_v4.out inputs/
 	 #+END_EXAMPLE
 	 =eweld.in= will be input.
-  2. Run =Automesh_v14.py= with SALOME to create =Mesh_3D.unv=
+  2. Run =utils/Automesh_v14.py= from SALOME's Python Console to create =Mesh_3D.unv=, or run 
+	 without Salome GUI:
+	 #+BEGIN_EXAMPLE
+	 $SALOMEPATH/salome start -t -w 1 utils/Automesh_v14.py
+	 #+END_EXAMPLE
 	 1) The files will be input:
 		- =./inputs/eweld.in=
 		- =./inputs/eweld_weld_parameters.in=
@@ -63,11 +67,11 @@
 	   - =model_ini_temperature.in=
 	   - =model_material.in=
 	   - =model_node.in=
-  6. Move =model_dflux.for= to the Calculix directory and rename to =dflux.f=, and compile CalculiX
-  7. Run =analysis.inp= with calculix
+  6. Move =model_dflux.for= to the CalculiX directory and rename to =dflux.f=, and compile CalculiX
+  7. Run =analysis.inp= with CalculiX
 
 * Footnotes
 
-[fn:1] On linux, compile 	 =determine_passes_arc_v4.out=, to get =determine_passes_arc_v4.out= via =gfortran determine_passes_arc_v4.for -o determine_passes_arc_v4.out=
+[fn:1] On Linux, compile 	 =determine_passes_arc_v4.out=, to get =determine_passes_arc_v4.out= via =gfortran determine_passes_arc_v4.for -o determine_passes_arc_v4.out=
 
 
