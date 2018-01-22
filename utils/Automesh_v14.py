@@ -16,10 +16,29 @@ import sys
 import glob
 import math
 from math import *
+import argparse
 
 import data_IO
 
-logfile = open( "AutoMesh.log", "w" )
+parser = argparse.ArgumentParser(
+    description='Run under Salome to create the mesh, step file and dflux.f files for a welding case')
+
+parser.add_argument("--weld_pass_coordinates_file", default= "inputs/pass_coordinates.out",
+                    help='The file that has the weld pass coordinates'
+                         '(default:"inputs/pass_coordinates.out")')
+
+parser.add_argument("--out_dir", default= "./",
+                    help='The output directory (default:"./")')
+
+
+parser.add_argument("--log_dir", default= "./",
+                    help='The log directory (default:"./")')
+
+args = parser.parse_args()
+out_dir = args.out_dir
+log_dir = args.log_dir
+
+logfile = open(os.path.join(log_dir, "AutoMesh.log"), "w" )
 
 cwd=os.getcwd() 
 logfile.write("Work directory = " + cwd +'\n')
@@ -597,7 +616,7 @@ def centroid_cal(k,weld_area):
 #--------------- Read pass_coordinates.out -------------------
 #-------------------------------------------------------------
 
-bead_file = os.path.join(cwd, "inputs/pass_coordinates.out")
+bead_file = os.path.join(cwd, args.weld_pass_coordinates_file)
 bead_data = open(bead_file, "r" )
 
 numpt=[[],]*nweld
@@ -714,7 +733,7 @@ for k in range(nweld):
 #------------     model_dflux.for    -----------------
 #-------------------------------------------------------------
 def dflux_output(jshape,pipe_D,nweld,cent,wp_dim_w,wp_dim_h,wp_P,wp_TS,wp_eff,length):
-    dfluxfile = open( "model_dflux.for", "w" )
+    dfluxfile = open( os.path.join(out_dir,"model_dflux.for"), "w" )
     dfluxfile.write('! Abaqus interface ' + '\n')
     dfluxfile.write('!      subroutine dflux(flux,sol,kstep,kinc,time,noel,npt,coords, ' + '\n') 
     dfluxfile.write('!     & jltyp,temp,press,sname) ' + '\n')     
@@ -848,7 +867,7 @@ def dflux_output(jshape,pipe_D,nweld,cent,wp_dim_w,wp_dim_h,wp_P,wp_TS,wp_eff,le
 #------------------------- model_step.in --------------------------
 #-------------------------------------------------------------
 def step_output(jshape,pipe_D,nweld,wp_TS,length):
-    stepfile = open( "model_step.in", "w" )
+    stepfile = open(os.path.join(out_dir, "model_step.in"), "w" )
     for k in range(nweld):       
       if(pipe_D > 0): length = 2.0*pi*(pipe_D/2.0-cent[k][1])     
       tweld=length/wp_TS[k]
@@ -2503,6 +2522,6 @@ if os.path.isfile('Mesh_3D_old.unv'):
 if os.path.isfile('Mesh_3D.unv'):
     os.rename('Mesh_3D.unv', 'Mesh_3D_old.unv')
 try:
-  Mesh_1.ExportUNV( cwd+'/Mesh_3D.unv' )
+  Mesh_1.ExportUNV( os.path.join(out_dir,'Mesh_3D.unv' ))
 except:
   print 'ExportUNV() failed. Invalid file name?'

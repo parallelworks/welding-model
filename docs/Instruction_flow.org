@@ -30,6 +30,8 @@
 		- =./inputs/eweld.in=
 		- =./inputs/eweld_weld_parameters.in=
 		- =./setting/Setting_arc_efficiency_dfault.in=
+		- =./inputs/pass_coordinates.out=
+		  
 	 2) The files will be output: 
 		- =Mesh_3D.unv=
 		- =model_dflux.for=
