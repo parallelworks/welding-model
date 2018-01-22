@@ -875,7 +875,7 @@ def step_output(jshape,pipe_D,nweld,wp_TS,length):
       tmax=lwt/wp_TS[k]
       ctime=60.0
       cfinal=15000.0
-      stepfile.write('**********STEP ' + str(k+1) + ' Depositing********' + '\n')
+      stepfile.write('**********STEP ' + str(k*3+1) + ' Depositing********' + '\n')
       stepfile.write('*STEP,INC=5000 '  + '\n')
       stepfile.write('*UNCOUPLED TEMPERATURE-DISPLACEMENT,DELTMX=50000.0'  + '\n')
       stepfile.write(' 0.1, 0.1, 1.0E-9, 0.1' + '\n')
@@ -896,14 +896,14 @@ def step_output(jshape,pipe_D,nweld,wp_TS,length):
         stepfile.write(' WP' + str(k+1) + ',' + '\n')
       #endif
       stepfile.write('*END STEP' + '\n')
-      stepfile.write('************STEP  ' + str(k+2) + ' Heating**********' + '\n')
+      stepfile.write('************STEP  ' + str(k*3+2) + ' Heating**********' + '\n')
       stepfile.write('*STEP,INC=5000'  + '\n')
       stepfile.write('*UNCOUPLED TEMPERATURE-DISPLACEMENT,DELTMX=50000.0'  + '\n')
       stepfile.write(" " + str(tini) + "," + str(tweld) + "," + '0.1E-09, ' + str(tmax) + '\n')
       stepfile.write('*DFLUX,OP=NEW'  + '\n')
       stepfile.write(' WP' + str(k+1) + ', BFNU' + '\n')
       stepfile.write('*END STEP' + '\n')
-      stepfile.write('************STEP ' + str(k+3) + ' Cooling*********'  + '\n')
+      stepfile.write('************STEP ' + str(k*3+3) + ' Cooling*********'  + '\n')
       stepfile.write('*STEP,INC=5000'   + '\n')
       stepfile.write('*UNCOUPLED TEMPERATURE-DISPLACEMENT,DELTMX=50000.0' + '\n')
       if( (k+1) == nweld):
