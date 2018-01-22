@@ -1,4 +1,4 @@
-% Created 2018-01-22 Mon 09:44
+% Created 2018-01-22 Mon 16:20
 \documentclass[12pt,letterpaper]{article}
 \usepackage{graphicx,rotating,overpic,eepic,amssymb,amsmath,color,wasysym,hyperref,soul}
 %\usepackage[backend=biber,natbib=true,style=numeric,sorting=none,firstinits=true,maxbibnames=15]{biblatex}
@@ -128,18 +128,19 @@ python2 tools/unv2calculix.py Mesh_3D.unv Model3d
 \texttt{Model3d.inp} will be created.
 \item To generate the \texttt{model\_film.in} file (using cgx and unical), run:
 \begin{verbatim}
-./createFilm.sh
+./utils/createFilm.sh Mesh_3D.unv ./utils/write_film.fbd model_film.in
 \end{verbatim}
 \item Run 
 \begin{verbatim}
-python Analysis_file_create.py
+python2 utils/Analysis_file_create.py
 \end{verbatim}
 \begin{itemize}
 \item The files will be input:
 \begin{itemize}
 \item \texttt{./inputs/eweld.in}
-\item \texttt{eweld\_boundary\_condition.in}
-\item \texttt{eweld\_preheat\_interpass\_temperature.in}
+\item \texttt{./inputs/eweld\_boundary\_condition.in}
+\item \texttt{./inputs/eweld\_preheat\_interpass\_temperature.in}
+\item \texttt{./Model3d.inp}
 \end{itemize}
 \item The files will be output:
 \begin{itemize}
@@ -147,14 +148,18 @@ python Analysis_file_create.py
 \item \texttt{model\_ele4.in}
 \item \texttt{model\_ele6.in}
 \item \texttt{model\_ele8.in}
-\item \texttt{model\_film.in}
 \item \texttt{model\_group.in}
 \item \texttt{model\_ini\_temperature.in}
 \item \texttt{model\_material.in}
 \item \texttt{model\_node.in}
 \end{itemize}
 \end{itemize}
-\item Move \texttt{model\_dflux.for} to the CalculiX directory and rename to \texttt{dflux.f}, and compile CalculiX
+\item Move \texttt{model\_dflux.for} to the CalculiX directory (to \texttt{CalculiX-PW/src/}) and rename to \texttt{dflux.f}, and compile CalculiX
+(see the notes in \texttt{CalculiX-PW/README.md} for compilation/installation of CalculiX).
+Or uncompress \texttt{tools/CalculiX-PW.tar} (works under Ubuntu 14.04, if all the required packages for CalculiX are installed):
+\begin{verbatim}
+tar -xf tools/CalculiX-PW.tar
+\end{verbatim}
 \item Run \texttt{analysis.inp} with CalculiX
 \end{enumerate}
 \end{itemize}

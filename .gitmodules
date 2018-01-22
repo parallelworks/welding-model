@@ -1,0 +1,3 @@
+[submodule "tools/CalculiX-PW"]
+	path = CalculiX-PW
+	url = git@github.com:parallelworks/CalculiX-PW.git

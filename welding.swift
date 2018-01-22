@@ -19,6 +19,8 @@ string caseDirRoot          = strcat(outDir, "case_");
 file ffilmFbd             <"utils/write_film.fbd">;
 file utils[] 		        <filesys_mapper;location="utils", pattern="?*.*">;
 file tools[] 		        <filesys_mapper;location="tools", pattern="?*">;
+//file[] tools                <Ext; exec = "utils/mapper.sh", root = "tools">;
+file CalculiX               <"tools/CalculiX-PW.tar">;
 
 // ------ App Definitions --------------------
 
@@ -42,6 +44,10 @@ app (file ffilm, file ferr, file fout) createFilm (file fMeshUnv, file fflimFbd,
 app (file analysis_files, file ferr, file fout) createAnalysisFiles (file feweldIn, file feweldBC, file feweldPreHeat, file fMeshInp, file[] utils){
 	python2 "utils/Analysis_file_create.py" strcat("--model_inp_file=",filename(fMeshInp))  strcat("--log_dir=",dirname(fout)) strcat("--out_dir=",dirname(analysis_files)) stderr=filename(ferr) stdout=filename(fout);
 	tar "-cf"  filename(analysis_files) "-C" dirname(analysis_files) "model_bc.in" "model_ele4.in" "model_ele6.in" "model_ele8.in" "model_group.in" "model_ini_temperature.in" "model_material.in" "model_node.in";
+}
+
+app (file ccxBin, file ferr, file fout) compileCcx (file fdflux, file CalculiX, file utils[]){
+	bash "./utils/compileCcx.sh" filename(fdflux) filename(CalculiX) filename(ccxBin) stderr=filename(ferr) stdout=filename(fout);
 }
 
 //----------------Workflow-------------------
@@ -92,3 +98,11 @@ file createAnalFilesErr         <strcat(errorsDir, "createAnalFiles", i, ".err")
 file createAnalFilesOut         <strcat(logsDir, "createAnalFiles", i, ".out")>;  
 (fAnal,createAnalFilesErr, createAnalFilesOut) = createAnalysisFiles(feweldIn, feweldBC, feweldPreHeat, meshInp_files[i], utils);
 analysis_files[i] = fAnal;
+
+file ccxExec_files[];
+file fccxExec                    <strcat(caseOutDirs[i], "/ccx_2.12_MT")>;
+file compileCCXErr               <strcat(errorsDir, "compileCCX", i, ".err")>;                          
+file compileCCXOut               <strcat(logsDir, "compileCCX", i, ".out")>;  
+(fccxExec, compileCCXErr, compileCCXOut) = compileCcx(dflux_files[i], CalculiX, utils);
+ccxExec_files[i] = fccxExec;
+

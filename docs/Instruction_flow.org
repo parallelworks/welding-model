@@ -67,7 +67,12 @@
 	   - =model_ini_temperature.in=
 	   - =model_material.in=
 	   - =model_node.in=
-  6. Move =model_dflux.for= to the CalculiX directory and rename to =dflux.f=, and compile CalculiX
+  6. Move =model_dflux.for= to the CalculiX directory (to =CalculiX-PW/src/=) and rename to =dflux.f=, and compile CalculiX
+	 (see the notes in =CalculiX-PW/README.md= for compilation/installation of CalculiX).
+	 Or uncompress =tools/CalculiX-PW.tar= (works under Ubuntu 14.04, if all the required packages for CalculiX are installed):
+	 #+BEGIN_EXAMPLE
+	 tar -xf tools/CalculiX-PW.tar
+	 #+END_EXAMPLE
   7. Run =analysis.inp= with CalculiX
 
 * Footnotes
