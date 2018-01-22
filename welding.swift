@@ -17,6 +17,7 @@ string logsDir              = strcat(outDir, "logFiles/");
 string caseDirRoot          = strcat(outDir, "case_"); 
 
 file utils[] 		        <filesys_mapper;location="utils", pattern="?*.*">;
+file tools[] 		        <filesys_mapper;location="tools", pattern="?*">;
 
 // ------ App Definitions --------------------
 
@@ -27,6 +28,10 @@ app (file fpassCoords, file ferr, file fout) calcArcPasses (file feweldIn, file[
 
 app (file fMeshUnv, file dfluxfile, file fsteps, file ferr, file fout) runAutoMesh (file feweldIn, file feweldParams, file farcEffcSetting, file fpassCoords, file[] utils){
 	bash "./utils/runSalome.sh" dirname(fMeshUnv) dirname(fout) filename(fpassCoords) stderr=filename(ferr) stdout=filename(fout);
+}
+
+app (file fMeshInp, file ferr, file fout) runUnical (file fMeshUnv, string meshInp_woExtension,file[] tools){
+	python2 "tools/unv2calculix.py" filename(fMeshUnv) meshInp_woExtension stderr=filename(ferr) stdout=filename(fout);
 }
 
 
@@ -57,3 +62,13 @@ file autoMeshOut       <strcat(logsDir, "autoMesh", i, ".out")>;
 meshUnv_files[i] = fMeshUnv;
 dflux_files[i] = fdflux;
 step_files[i] = fsteps;
+
+file[] meshInp_files;
+string meshInp_woExtension = strcat(caseOutDirs[i], "/Model3d");
+
+file fMeshInp          <strcat(meshInp_woExtension, ".inp")>;
+file unicalErr         <strcat(errorsDir, "unical", i, ".err")>;                          
+file unicalOut         <strcat(logsDir, "unical", i, ".out")>;  
+
+(fMeshInp, unicalErr, unicalOut) = runUnical (meshUnv_files[i], meshInp_woExtension, tools);
+meshInp_files[i] = fMeshInp;
