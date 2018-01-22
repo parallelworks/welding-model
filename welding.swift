@@ -39,6 +39,11 @@ app (file ffilm, file ferr, file fout) createFilm (file fMeshUnv, file fflimFbd,
 	bash "./utils/createFilm.sh" filename(fMeshUnv) filename(fflimFbd) filename(ffilm)  stderr=filename(ferr) stdout=filename(fout);
 }
 
+app (file analysis_files, file ferr, file fout) createAnalysisFiles (file feweldIn, file feweldBC, file feweldPreHeat, file fMeshInp, file[] utils){
+	python2 "utils/Analysis_file_create.py" strcat("--model_inp_file=",filename(fMeshInp))  strcat("--log_dir=",dirname(fout)) strcat("--out_dir=",dirname(analysis_files)) stderr=filename(ferr) stdout=filename(fout);
+	tar "-cf"  filename(analysis_files) "-C" dirname(analysis_files) "model_bc.in" "model_ele4.in" "model_ele6.in" "model_ele8.in" "model_group.in" "model_ini_temperature.in" "model_material.in" "model_node.in";
+}
+
 //----------------Workflow-------------------
 
 // Create the weld pass coordinates
@@ -80,3 +85,10 @@ file createFilmOut         <strcat(logsDir, "createFilm", i, ".out")>;
 (ffilm, createFilmErr, createFilmOut) = createFilm(meshUnv_files[i], ffilmFbd, utils, tools);
 film_files[i] = ffilm;
 
+
+file analysis_files[];
+file fAnal                   <strcat(caseOutDirs[i], "/analFiles.tar")>;
+file createAnalFilesErr         <strcat(errorsDir, "createAnalFiles", i, ".err")>;                          
+file createAnalFilesOut         <strcat(logsDir, "createAnalFiles", i, ".out")>;  
+(fAnal,createAnalFilesErr, createAnalFilesOut) = createAnalysisFiles(feweldIn, feweldBC, feweldPreHeat, meshInp_files[i], utils);
+analysis_files[i] = fAnal;

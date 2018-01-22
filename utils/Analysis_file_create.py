@@ -9,6 +9,8 @@ import os
 import os.path
 import shutil
 from math import *
+import argparse
+import data_IO
 
 cwd=os.getcwd() 
 
@@ -439,8 +441,8 @@ def read_input(setfile):
 ##-------------------------------------------------------------------
 #
 def read_coordinate_pre(maxn,inp_fname):
-    logfile.write('Read Node coordinate' +'\n')       
-    finp = open( inp_fname, 'r' )
+    logfile.write('Read Node coordinate' +'\n')
+    finp = data_IO.open_file(inp_fname)
     # loop through the file until EOF is reached
     numNode = 0
     ndidmax=0
@@ -946,7 +948,7 @@ def dist3d(x1,y1,z1,x2,y2,z2):
 #
 ##------------------------------------------------------------------- 
 def create_node_in(out_fname,num_node,nd_id,nd_cod):
-    fout = open( out_fname, 'w' )
+    fout = data_IO.open_file( out_fname, 'w' )
     for iii in range(num_node):    
         node=nd_id[iii]
         [xt,yt,zt]=nd_cod[node]
@@ -959,7 +961,7 @@ def create_node_in(out_fname,num_node,nd_id,nd_cod):
 #
 ##------------------------------------------------------------------- 
 def output_bc(out_fname,num_node,nd_id,nd_cod,numfix,fix_cod,fix_dir,nfmin):
-    fout = open( out_fname, 'w' )
+    fout = data_IO.open_file( out_fname, 'w' )
     
     for jjj in range(numfix):
         dmin=1.0E10
@@ -1303,7 +1305,7 @@ def output_sequence(out_fname,numWeld,power,speed,eff,thold,numSt,numCe,wpst,wpm
 
 def output_material(out_fname,numWeld,myMaterial1,myMaterial2,FillerMaterial):
 
-    out_seq = open(out_fname, 'w' ) 
+    out_seq = data_IO.open_file(out_fname, 'w' )
     
     text = '*ELSET,ELSET=MAT1'
     out_seq.write(str(text) + '\n')
@@ -1361,7 +1363,7 @@ def output_material(out_fname,numWeld,myMaterial1,myMaterial2,FillerMaterial):
     
 def output_ini(out_fname,preheat,interpass):
 
-    out_seq = open(out_fname, 'w' ) 
+    out_seq = data_IO.open_file(out_fname, 'w' )
     
     text = '*INITIAL CONDITIONS,TYPE=TEMP'
     out_seq.write(str(text) + '\n')
@@ -1376,9 +1378,25 @@ def output_ini(out_fname,preheat,interpass):
 main program
 """
 if( __name__ == "__main__" ):
-    
-    logfile = open( "Analysis_file_create.log", "w" )
-    
+
+    parser = argparse.ArgumentParser(
+        description='Create BC, element, group, init_temperature, material and node files for a welding case')
+
+    parser.add_argument("--model_inp_file", default= "./Model3d.inp",
+                        help='The mesh file in .inp format (converted mesh from .unv by '
+                             'unical) - default:"./Model3d.inp"')
+    parser.add_argument("--out_dir", default= "./",
+                        help='The output directory - default:"./"')
+    parser.add_argument("--log_dir", default= "./",
+                        help='The log directory - default:"./"')
+
+
+    args = parser.parse_args()
+    out_dir = args.out_dir
+    log_dir = args.log_dir
+
+    logfile = data_IO.open_file(os.path.join(log_dir, "Analysis_file_create.log"), "w" )
+
     maxn=1000000
     #setfile="step0_model_create.inp"
     #(numWeld,cooltime,power,speed,eff,thold,weldpass,numCe,model_node,model_ele_t,model_ele_s,model_group,model_film,model_bod,model_mat,model_therm,model_mech)=read_input(setfile)
@@ -1387,141 +1405,134 @@ if( __name__ == "__main__" ):
     
     #--------------------------------------------------------------
     # Read eweld.in
-    #      
-    if os.name == 'posix':
-       eweld_file=cwd + "/inputs/eweld.in"       
-    elif os.name == 'nt':
-       eweld_file=cwd + "/inputs/eweld.in" 
-    #endif
+    #
+    eweld_file = os.path.join(cwd, "inputs/eweld.in")
+
     (numWeld,myMaterial1,myMaterial2,FillerMaterial)=read_eweld_in(eweld_file)
     #--------------------------------------------------------------
     # Read aeweld_preheat_interpass_temperature.in
     # output model_ini_temperature.in
     #      
-    if os.name == 'posix':
-       ini_file=cwd + "/inputs/eweld_preheat_interpass_temperature.in"       
-    elif os.name == 'nt':
-       ini_file=cwd + "/inputs/eweld_preheat_interpass_temperature.in" 
-    #endif
-    
+
+    ini_file = os.path.join(cwd,"inputs/eweld_preheat_interpass_temperature.in")
     (preheat,interpass)=read_ini_in(ini_file)
-    out_fname = "model_ini_temperature.in" 
+
+    out_fname = os.path.join(out_dir, "model_ini_temperature.in")
     ttt=output_ini(out_fname,preheat,interpass)
     #--------------------------------------------------------------
     # Read eweld_boundary_conditions.in
     #      
-    if os.name == 'posix':
-       bc_file=cwd + "/inputs/eweld_boundary_condition.in"       
-    elif os.name == 'nt':
-       bc_file=cwd + "/inputs/eweld_boundary_condition.in" 
-    #endif
+    bc_file = os.path.join(cwd,"inputs/eweld_boundary_condition.in" )
+
     fix_dir = [[[],]*3]*100
     fix_cod = [[[],]*3]*100
     (numfix,fix_cod,fix_dir)=read_bc_in(bc_file)
     #--------------------------------------------------------------
     # output model_materials.in
     #          
-    out_fname = "model_material.in" 
+    out_fname = os.path.join(out_dir,"model_material.in")
     ttt=output_material(out_fname,numWeld,myMaterial1,myMaterial2,FillerMaterial)
 
-    inp_fname="Model3d.inp"     
-    if(os.path.isfile(inp_fname)==True) :  
-        #--------------------------------------------------------------
-        # Read node
-        #
-	(num_node,ndidmax)=read_coordinate_pre(maxn,inp_fname)
-	print "Number of Node in global model =", num_node	
-	print "Maximum Node id =", ndidmax
-	text = "Number of Node in global model =" + str(num_node)
-	logfile.write(text + '\n')
-	text = "Maximum Node id =" + str(ndidmax)
-	logfile.write(text + '\n')
+
+    inp_fname= args.model_inp_file #"Model3d.inp"
+
+    # if(os.path.isfile(inp_fname)==True) :
+    #     #--------------------------------------------------------------
+    #     # Read node
+    #     #
+    (num_node,ndidmax)=read_coordinate_pre(maxn,inp_fname)
+    print("Number of Node in global model =", num_node)
+    print("Maximum Node id =", ndidmax)
+    text = "Number of Node in global model =" + str(num_node)
+    logfile.write(text + '\n')
+    text = "Maximum Node id =" + str(ndidmax)
+    logfile.write(text + '\n')
 	
-	nd_id= [[[],]*1]*(ndidmax+1)
-	nd_cod=[[[],]*3]*(ndidmax+1)
-	(numNode,nd_id,nd_cod)=read_coordinate(maxn,inp_fname)
+    nd_id= [[[],]*1]*(ndidmax+1)
+    nd_cod=[[[],]*3]*(ndidmax+1)
+    (numNode,nd_id,nd_cod)=read_coordinate(maxn,inp_fname)
         
-        model_node="model_node.in"        
-        out_fname = model_node
-        ttt=create_node_in(out_fname,num_node,nd_id,nd_cod)
-        #--------------------------------------------------------------
+    model_node = os.path.join(out_dir, "model_node.in")
+    out_fname = model_node
+    ttt=create_node_in(out_fname,num_node,nd_id,nd_cod)
+    #--------------------------------------------------------------
 	# output model_materials.in
 	#          
-	out_fname = "model_bc.in" 
-	nfmin = [[],]*100
-        ttt=output_bc(out_fname,num_node,nd_id,nd_cod,numfix,fix_cod,fix_dir,nfmin)
-        #-----------------------------------------------------------------
-        # Read elements
-        #
-        out_fname="ele_temp.in" 
-        (num_ele,eleidmax)=read_element_pre(maxn,inp_fname,out_fname)
-	print "Number of element =", num_ele
-	print "Maximum ele id =", eleidmax
+    out_fname = os.path.join(out_dir, "model_bc.in")
+    nfmin = [[],]*100
+    ttt=output_bc(out_fname,num_node,nd_id,nd_cod,numfix,fix_cod,fix_dir,nfmin)
+    #-----------------------------------------------------------------
+    # Read elements
+    #
+    out_fname="ele_temp.in"
+    (num_ele,eleidmax)=read_element_pre(maxn,inp_fname,out_fname)
+    print("Number of element =", num_ele)
+    print("Maximum ele id =", eleidmax)
 	
-	text = "Number of element =" + str(num_ele)
-	logfile.write(text + '\n')
-	text = "Maximum ele id =" + str(eleidmax)
-	logfile.write(text + '\n')
+    text = "Number of element =" + str(num_ele)
+    logfile.write(text + '\n')
+    text = "Maximum ele id =" + str(eleidmax)
+    logfile.write(text + '\n')
+
+    ele_id=[[[],]*1]*(eleidmax+1)
+    eletype=[[[],]*1]*(eleidmax+1)
+
+    ele=[[],]*(eleidmax+1)
+    for i in range(eleidmax):
+        ele[i]=[[],]*8
 	
-	ele_id=[[[],]*1]*(eleidmax+1)
-	eletype=[[[],]*1]*(eleidmax+1)
-	
-	ele=[[],]*(eleidmax+1)
-	for i in range(eleidmax):
-	    ele[i]=[[],]*8		
-	
-	(numEle,ele_id,eletype,ele)=read_element(maxn,inp_fname)
-	print "numEle =", numEle
+    (numEle,ele_id,eletype,ele)=read_element(maxn,inp_fname)
+    print("numEle =", numEle)
     
-        out_c3d8 = open('model_ele8.in', 'w' )	       
-        out_c3d6 = open('model_ele6.in', 'w' )	
-        out_s4 = open('model_ele4.in', 'w' )
+    out_c3d8 = data_IO.open_file(os.path.join(out_dir, 'model_ele8.in'), 'w' )
+    out_c3d6 = data_IO.open_file(os.path.join(out_dir, 'model_ele6.in'), 'w' )
+    out_s4 = data_IO.open_file(os.path.join(out_dir, 'model_ele4.in'), 'w' )
 
-        #inp_fname="ele_temp.in" 
-        #model_ele_t="model_ele_t.in"
-        #out_fname=model_ele_t 
-        #ttt=create_elet(inp_fname,out_fname)
-	#print "model_ele_s.in has been created!"  
+    #inp_fname="ele_temp.in"
+    #model_ele_t="model_ele_t.in"
+    #out_fname=model_ele_t
+    #ttt=create_elet(inp_fname,out_fname)
+    #print "model_ele_s.in has been created!"
 
-        #inp_fname="ele_temp.in" 
-        #model_ele_s="model_ele_s.in"        
-        #out_fname=model_ele_s 
-        #ttt=create_eles(inp_fname,out_fname)
-	#print "model_ele_s.in has been created!"    
-	        
-        #-----------------------------------------------------------------
-        # Read and output group file
-        #
-        model_group="model_group.in"       
-        out_group = open(model_group, 'w' )
-        
-	for ie in range(num_ele):
-	    eleIn=ele_id[ie]
-	    nodepe=eletype[eleIn]     	    
-	    ec=eleIn
-	    numD=8
-	    if(nodepe==8): out_c3d8.write(str(eleIn).rjust(numD) + ", " + str(ele[ec][0]).rjust(numD) + ", " + str(ele[ec][1]).rjust(numD) + ", " + str(ele[ec][2]).rjust(numD) + ", " + str(ele[ec][3]).rjust(numD) + ", " + str(ele[ec][4]).rjust(numD) + ", " + str(ele[ec][5]).rjust(numD) + ", " + str(ele[ec][6]).rjust(numD) + ", " + str(ele[ec][7]).rjust(numD) + '\n')
-	    if(nodepe==6): out_c3d6.write(str(eleIn).rjust(numD) + ", " + str(ele[ec][0]).rjust(numD) + ", " + str(ele[ec][1]).rjust(numD) + ", " + str(ele[ec][2]).rjust(numD) + ", " + str(ele[ec][3]).rjust(numD) + ", " + str(ele[ec][4]).rjust(numD) + ", " + str(ele[ec][5]).rjust(numD) + '\n')
-	    if(nodepe==4): out_s4.write(str(eleIn).rjust(numD) + ", " + str(ele[ec][0]).rjust(numD) + ", " + str(ele[ec][1]).rjust(numD) + ", " + str(ele[ec][2]).rjust(numD) + ", " + str(ele[ec][3]).rjust(numD) + ", " + '\n')	       
+    #inp_fname="ele_temp.in"
+    #model_ele_s="model_ele_s.in"
+    #out_fname=model_ele_s
+    #ttt=create_eles(inp_fname,out_fname)
+    #print "model_ele_s.in has been created!"
+
+    #-----------------------------------------------------------------
+    # Read and output group file
+    #
+    model_group= os.path.join(out_dir, "model_group.in")
+    out_group = data_IO.open_file(model_group, 'w' )
+
+    for ie in range(num_ele):
+        eleIn=ele_id[ie]
+        nodepe=eletype[eleIn]
+        ec=eleIn
+        numD=8
+        if(nodepe==8): out_c3d8.write(str(eleIn).rjust(numD) + ", " + str(ele[ec][0]).rjust(numD) + ", " + str(ele[ec][1]).rjust(numD) + ", " + str(ele[ec][2]).rjust(numD) + ", " + str(ele[ec][3]).rjust(numD) + ", " + str(ele[ec][4]).rjust(numD) + ", " + str(ele[ec][5]).rjust(numD) + ", " + str(ele[ec][6]).rjust(numD) + ", " + str(ele[ec][7]).rjust(numD) + '\n')
+        if(nodepe==6): out_c3d6.write(str(eleIn).rjust(numD) + ", " + str(ele[ec][0]).rjust(numD) + ", " + str(ele[ec][1]).rjust(numD) + ", " + str(ele[ec][2]).rjust(numD) + ", " + str(ele[ec][3]).rjust(numD) + ", " + str(ele[ec][4]).rjust(numD) + ", " + str(ele[ec][5]).rjust(numD) + '\n')
+        if(nodepe==4): out_s4.write(str(eleIn).rjust(numD) + ", " + str(ele[ec][0]).rjust(numD) + ", " + str(ele[ec][1]).rjust(numD) + ", " + str(ele[ec][2]).rjust(numD) + ", " + str(ele[ec][3]).rjust(numD) + ", " + '\n')
 	
-	out_c3d8.close()
-	out_c3d6.close()
-	out_s4.close()
-	out_group.close()
+    out_c3d8.close()
+    out_c3d6.close()
+    out_s4.close()
+    out_group.close()
 
-        out_fname=model_group 
-        numgroup=create_group(maxn,inp_fname,out_fname)
-	print "model_group.in has been created!" 
+    out_fname=model_group
+    numgroup=create_group(maxn,inp_fname,out_fname)
+    print("model_group.in has been created!")
         
-        #-----------------------------------------------------------------
-        # Read film
-        #        
-        #model_film="model_film.in"
-        #out_fname=model_film 
-        #numFilm=read_film(maxn,inp_fname,out_fname)
-	#print "Number of Film =", numFilm        
-            
-        # move file
-    	os.remove("ele_temp.in")
+    #-----------------------------------------------------------------
+    # Read film
+    #
+    #model_film="model_film.in"
+    #out_fname=model_film
+    #numFilm=read_film(maxn,inp_fname,out_fname)
+    #print "Number of Film =", numFilm
+
+    # move file
+    os.remove("ele_temp.in")
              
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#

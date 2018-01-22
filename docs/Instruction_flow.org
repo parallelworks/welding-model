@@ -51,18 +51,18 @@
 	 #+END_EXAMPLE
   5. Run 
 	 #+BEGIN_EXAMPLE
-	 python Analysis_file_create.py
+	 python2 utils/Analysis_file_create.py 
 	 #+END_EXAMPLE
 	 + The files will be input:
 	   - =./inputs/eweld.in=
-	   - =eweld_boundary_condition.in=
-	   - =eweld_preheat_interpass_temperature.in=
+	   - =./inputs/eweld_boundary_condition.in=
+	   - =./inputs/eweld_preheat_interpass_temperature.in= 
+	   - =./Model3d.inp=
 	 + The files will be output:
 	   - =model_bc.in=
 	   - =model_ele4.in=
 	   - =model_ele6.in=
 	   - =model_ele8.in=
-	   - =model_film.in= 
 	   - =model_group.in=
 	   - =model_ini_temperature.in=
 	   - =model_material.in=

@@ -41,7 +41,7 @@ log_dir = args.log_dir
 logfile = open(os.path.join(log_dir, "AutoMesh.log"), "w" )
 
 cwd=os.getcwd() 
-logfile.write("Work directory = " + cwd +'\n')
+logfile.write("Work directory = " + os.path.dirname(logfile.name) +'\n')
 #
 #------------------- Input Parameters -----------------------
 #
@@ -733,7 +733,7 @@ for k in range(nweld):
 #------------     model_dflux.for    -----------------
 #-------------------------------------------------------------
 def dflux_output(jshape,pipe_D,nweld,cent,wp_dim_w,wp_dim_h,wp_P,wp_TS,wp_eff,length):
-    dfluxfile = open( os.path.join(out_dir,"model_dflux.for"), "w" )
+    dfluxfile = data_IO.open_file(os.path.join(out_dir,"model_dflux.for"), "w" )
     dfluxfile.write('! Abaqus interface ' + '\n')
     dfluxfile.write('!      subroutine dflux(flux,sol,kstep,kinc,time,noel,npt,coords, ' + '\n') 
     dfluxfile.write('!     & jltyp,temp,press,sname) ' + '\n')     
