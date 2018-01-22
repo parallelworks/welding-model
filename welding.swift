@@ -16,6 +16,7 @@ string errorsDir            = strcat(outDir, "errorFiles/");
 string logsDir              = strcat(outDir, "logFiles/");
 string caseDirRoot          = strcat(outDir, "case_"); 
 
+file ffilmFbd             <"utils/write_film.fbd">;
 file utils[] 		        <filesys_mapper;location="utils", pattern="?*.*">;
 file tools[] 		        <filesys_mapper;location="tools", pattern="?*">;
 
@@ -34,6 +35,9 @@ app (file fMeshInp, file ferr, file fout) runUnical (file fMeshUnv, string meshI
 	python2 "tools/unv2calculix.py" filename(fMeshUnv) meshInp_woExtension stderr=filename(ferr) stdout=filename(fout);
 }
 
+app (file ffilm, file ferr, file fout) createFilm (file fMeshUnv, file fflimFbd, file[] utils, file[] tools){
+	bash "./utils/createFilm.sh" filename(fMeshUnv) filename(fflimFbd) filename(ffilm)  stderr=filename(ferr) stdout=filename(fout);
+}
 
 //----------------Workflow-------------------
 
@@ -41,7 +45,6 @@ app (file fMeshInp, file ferr, file fout) runUnical (file fMeshUnv, string meshI
 int i=1;
 file[] passCoords_files;
 string[] caseOutDirs;
-
 caseOutDirs[i]         = strcat(caseDirRoot, i,"/");
 file fpassCoords 	   <strcat(caseOutDirs[i], "/pass_coordinates.out")>;
 file arcPassErr        <strcat(errorsDir, "arcPass", i, ".err")>;                          
@@ -52,7 +55,6 @@ passCoords_files[i] = fpassCoords;
 file[] meshUnv_files;
 file[] dflux_files;
 file[] step_files;
-
 file fMeshUnv          <strcat(caseOutDirs[i], "/Mesh_3D.unv")>;
 file fdflux            <strcat(caseOutDirs[i], "/model_dflux.for")>;
 file fsteps            <strcat(caseOutDirs[i], "/model_step.in")>;
@@ -65,10 +67,16 @@ step_files[i] = fsteps;
 
 file[] meshInp_files;
 string meshInp_woExtension = strcat(caseOutDirs[i], "/Model3d");
-
 file fMeshInp          <strcat(meshInp_woExtension, ".inp")>;
 file unicalErr         <strcat(errorsDir, "unical", i, ".err")>;                          
 file unicalOut         <strcat(logsDir, "unical", i, ".out")>;  
-
-(fMeshInp, unicalErr, unicalOut) = runUnical (meshUnv_files[i], meshInp_woExtension, tools);
+(fMeshInp, unicalErr, unicalOut) = runUnical(meshUnv_files[i], meshInp_woExtension, tools);
 meshInp_files[i] = fMeshInp;
+
+file[] film_files;
+file ffilm                 <strcat(caseOutDirs[i], "/model_film.in")>;
+file createFilmErr         <strcat(errorsDir, "createFilm", i, ".err")>;                          
+file createFilmOut         <strcat(logsDir, "createFilm", i, ".out")>;  
+(ffilm, createFilmErr, createFilmOut) = createFilm(meshUnv_files[i], ffilmFbd, utils, tools);
+film_files[i] = ffilm;
+

@@ -47,7 +47,7 @@
 	 =Model3d.inp= will be created.
   4. To generate the =model_film.in= file (using cgx and unical), run:
 	 #+BEGIN_EXAMPLE
-	 ./createFilm.sh 
+	 ./utils/createFilm.sh Mesh_3D.unv ./utils/write_film.fbd model_film.in 
 	 #+END_EXAMPLE
   5. Run 
 	 #+BEGIN_EXAMPLE
