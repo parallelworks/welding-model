@@ -1331,7 +1331,7 @@ def output_material(out_fname,numWeld,myMaterial1,myMaterial2,FillerMaterial):
     out_seq.write(str(text) + '\n')
     text = '*MATERIAL,NAME=' + myMaterial1
     out_seq.write(str(text) + '\n')
-    text = '*INCLUDE,INPUT=' + cwd + '/material/Material_' + myMaterial1 + '.in'
+    text = '*INCLUDE,INPUT=' + 'material/Material_' + myMaterial1 + '.in'
     #text = '*INCLUDE,INPUT=Material_' + myMaterial1 + '.in'
     out_seq.write(str(text) + '\n')    
 
@@ -1339,7 +1339,7 @@ def output_material(out_fname,numWeld,myMaterial1,myMaterial2,FillerMaterial):
     out_seq.write(str(text) + '\n')
     text = '*MATERIAL,NAME=' + myMaterial2
     out_seq.write(str(text) + '\n')
-    text = '*INCLUDE,INPUT=' + cwd + '/material/Material_' + myMaterial2 + '.in'
+    text = '*INCLUDE,INPUT=' + 'material/Material_' + myMaterial2 + '.in'
     #text = '*INCLUDE,INPUT=material_' + myMaterial2 + '.in'
     out_seq.write(str(text) + '\n')  
 
@@ -1354,7 +1354,7 @@ def output_material(out_fname,numWeld,myMaterial1,myMaterial2,FillerMaterial):
     #   bc_file=cwd + "/inputs/eweld_boundary_condition.in" 
     #endif
     
-    text = '*INCLUDE,INPUT=' + cwd + '/material/Material_' + FillerMaterial + '.in'
+    text = '*INCLUDE,INPUT=' + 'material/Material_' + FillerMaterial + '.in'
     #text = '*INCLUDE,INPUT=Material_' + FillerMaterial + '.in'
     out_seq.write(str(text) + '\n')  
 
