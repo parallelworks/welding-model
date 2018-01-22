@@ -1,4 +1,4 @@
-% Created 2018-01-19 Fri 19:38
+% Created 2018-01-21 Sun 21:29
 \documentclass[12pt,letterpaper]{article}
 \usepackage{graphicx,rotating,overpic,eepic,amssymb,amsmath,color,wasysym,hyperref,soul}
 %\usepackage[backend=biber,natbib=true,style=numeric,sorting=none,firstinits=true,maxbibnames=15]{biblatex}
@@ -95,7 +95,10 @@
 \item For automatic mesh, the following steps will be run:
 \begin{enumerate}
 \item Check if \texttt{pass\_coordinates.out} exists in \texttt{input} directory, if no, run \\
-\texttt{determine\_passes\_arc\_v4.exe} to create \texttt{pass\_coordinates.out}\footnote{On linux, compile      \texttt{determine\_passes\_arc\_v4.out}, to get \texttt{determine\_passes\_arc\_v4.out} via \texttt{gfortran determine\_passes\_arc\_v4.for -o determine\_passes\_arc\_v4.out}}. 
+\texttt{utils/determine\_passes\_arc\_v4.exe} to create \texttt{inputs/pass\_coordinates.out}\footnote{On linux, compile      \texttt{determine\_passes\_arc\_v4.out}, to get \texttt{determine\_passes\_arc\_v4.out} via \texttt{gfortran determine\_passes\_arc\_v4.for -o determine\_passes\_arc\_v4.out}}:
+\begin{verbatim}
+./utils/determine_passes_arc_v4.out inputs/
+\end{verbatim}
 \texttt{eweld.in} will be input.
 \item Run \texttt{Automesh\_v14.py} with SALOME to create \texttt{Mesh\_3D.unv}
 \begin{enumerate}

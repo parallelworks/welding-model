@@ -20,7 +20,10 @@
 
 - For automatic mesh, the following steps will be run:
   1. Check if =pass_coordinates.out= exists in =input= directory, if no, run \\ 
-	 =determine_passes_arc_v4.exe= to create =pass_coordinates.out=[fn:1]. 
+	 =utils/determine_passes_arc_v4.exe= to create =inputs/pass_coordinates.out=[fn:1]:
+	 #+BEGIN_EXAMPLE
+	 ./utils/determine_passes_arc_v4.out inputs/
+	 #+END_EXAMPLE
 	 =eweld.in= will be input.
   2. Run =Automesh_v14.py= with SALOME to create =Mesh_3D.unv=
 	 1) The files will be input:

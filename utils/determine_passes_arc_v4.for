@@ -10,9 +10,12 @@ c********************************************************************
       dimension area_layer(50),areaps(50,25)
       dimension pcent(50,25,2)
       
-      open(unit=10,file="pass_coordinates.out") 
-      open(unit=20,file="pass_area.out") 	
-      open(unit=30,file="pass_center_area.out") 	
+      character(len=500) outDir
+      call get_output_path(outDir)
+
+      open(unit=10,file=trim(adjustl(outDir))//"pass_coordinates.out") 
+      open(unit=20,file=trim(adjustl(outDir))//"pass_area.out") 	
+      open(unit=30,file=trim(adjustl(outDir))//"pass_center_area.out") 	
       
       call eweld_input(th,vland,angle,gap,
      &     reinf,pene,ptclose,layer,npass)
@@ -70,6 +73,21 @@ c********************************************************************
       close(30)
       
       end
+
+!------------------------------------------------------------------------------
+      subroutine get_output_path(outDir)
+!     Set output directory from command line input
+      character(len=500) outDir
+!     Check if any arguments are found
+      narg=command_argument_count()
+      if(narg>0)then
+         call get_command_argument(1,outDir)
+         outDir = adjustl(outDir)
+      else
+         outDir = ""
+      end if
+      end
+
 !------------------------------------------------------------------------------
       subroutine broken_side(ptclose,layer,npass,ncord,pcd)
       
@@ -466,7 +484,7 @@ C                  write(1100,'(3I2,2f15.6)') i,j,k,pcd(i,j,k,1),pcd(i,j,k,2)
       CHARACTER*8 x_groove
       dimension npass(50)	
 
-      open(unit=2000,file="eweld.in",status='old')   
+      open(unit=2000,file="inputs/eweld.in",status='old')   
       write(1100,'("*Plate length")')
       read(2000,*)
       read(2000,*) ttt
