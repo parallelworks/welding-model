@@ -43,10 +43,9 @@ distmerge = 0.001
 #--arc efficiency
 #------------------------------------------------------------
 logfile.write("Read heat source efficiency" +'\n')
-if os.name == 'posix':
-   eff_file=cwd + "/setting/Setting_arc_efficiency_dfault.in"       
-elif os.name == 'nt':
-   eff_file=cwd + "\setting/Setting_arc_efficiency_dfault.in" 
+
+eff_file = os.path.join(cwd,"setting/Setting_arc_efficiency_dfault.in")
+
 eff=[ [],]*7        
 filein = open(eff_file, "r" )
 lines = filein.readlines()
@@ -107,10 +106,7 @@ def arc_efficiency(weld_type,vol):
 #-------------------------------------------------------------
 #--------------- Read eweld.in ------------------------------
 #-------------------------------------------------------------
-if os.name == 'posix':
-   eweld_file=cwd + "/inputs/eweld.in"       
-elif os.name == 'nt':
-   eweld_file=cwd + "/inputs/eweld.in" 
+eweld_file = os.path.join(cwd,"inputs/eweld.in")
 filein = open(eweld_file, "r" )
 lines = filein.readlines()
 
@@ -415,10 +411,8 @@ wp_TS = [[],]*nweld
 wp_eff=[[],]*nweld
 
 logfile.write('Read Weld Parameters ' +'\n')
-if os.name == 'posix':
-   wp_file =cwd + "/inputs/eweld_weld_parameters.in"      
-elif os.name == 'nt':
-   wp_file =cwd + "\inputs/eweld_weld_parameters.in" 
+
+wp_file = os.path.join(cwd,"inputs/eweld_weld_parameters.in")
 
 wp_data = open(wp_file, 'r')
 textLine = wp_data.readline()
@@ -602,10 +596,8 @@ def centroid_cal(k,weld_area):
 #-------------------------------------------------------------
 #--------------- Read pass_coordinates.out -------------------
 #-------------------------------------------------------------
-if os.name == 'posix':
-   bead_file=cwd + "/inputs/pass_coordinates.out"       
-elif os.name == 'nt':
-   bead_file=cwd + "/inputs/pass_coordinates.out" 
+
+bead_file = os.path.join(cwd, "inputs/pass_coordinates.out")
 bead_data = open(bead_file, "r" )
 
 numpt=[[],]*nweld
@@ -939,10 +931,7 @@ if myGrooveType.find('Bead-on-plate') != -1 :
 cool_st = [[[],]*3]*100
 cool_sp = [[[],]*3]*100
 
-if os.name == 'posix':
-   cool_file=cwd + "/inputs/cool_surface.in"       
-elif os.name == 'nt':
-   cool_file=cwd + "\inputs/cool_surface.in"  
+cool_file = os.path.join(cwd, "inputs/cool_surface.in")
 
 if(os.path.isfile(cool_file)==True):
    logfile.write('Cooling Surface' +'\n') 
@@ -997,10 +986,8 @@ if(os.path.isfile(cool_file)==True):
 #
 #--Temperature monitoring locations---------
 # 
-if os.name == 'posix':
-   tc_file=cwd + "/inputs/eweld_temperature_monitor.in"       
-elif os.name == 'nt':
-   tc_file=cwd + "\inputs/eweld_temperature_monitor.in"  
+
+tc_file = os.path.join(cwd,"inputs/eweld_temperature_monitor.in" )
 
 tc_pt = [[[],]*2]*100
 
