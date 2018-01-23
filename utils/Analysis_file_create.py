@@ -11,6 +11,7 @@ import shutil
 from math import *
 import argparse
 import data_IO
+import calculix_utils as cu
 
 cwd=os.getcwd() 
 
@@ -745,7 +746,6 @@ def create_group(maxn,inp_fname,out_fname):
         # EOF
         if not text:
             break
-        #end if
 
         # upper case
         textUpper = (text.strip()).upper()
@@ -754,25 +754,29 @@ def create_group(maxn,inp_fname,out_fname):
         if( textUpper.startswith('*NSET') ):
                outf.write(text.strip() +'\n')
                for iii in range(maxn):
-	           text = finp.readline()
+                   text = finp.readline()
+                   if text == '':
+                       break
                    textUpper = (text.strip()).upper()
-		   if(textUpper.startswith('*STEP')): 
-		      break
-		   else:         
-                      numgroup += 1	                   
-                   outf.write(text.strip() +'\n')
+                   if(textUpper.startswith('*STEP')):
+                       break
+                   else:
+                       numgroup += 1
+                       outf.write(text.strip() +'\n')
+
         elif( textUpper.startswith('*ELSET') ):
-               outf.write(text.strip() +'\n')
-               for iii in range(maxn):
-	           text = finp.readline()
-                   textUpper = (text.strip()).upper()
-		   if(textUpper.startswith('*STEP')): 
-		      break
-		   else:         
-                      numgroup += 1	                   
-                   outf.write(text.strip() +'\n')
-               break           
-    # end while
+            outf.write(text.strip() +'\n')
+            for iii in range(maxn):
+                text = finp.readline()
+                if text == '':
+                    break
+                textUpper = (text.strip()).upper()
+                if(textUpper.startswith('*STEP')):
+                    break
+                else:
+                    numgroup += 1
+                    outf.write(text.strip() +'\n')
+
     finp.close()
     outf.close()
     
@@ -1120,6 +1124,10 @@ def output10_perline(fout,media_film):
 ##------------------------------------------------------------------- 
 def read_pass_ele(maxn,inp_fname,phase):       
     vp=[[],]
+    phase = phase.upper()
+    # print "phase = ", phase
+    uphase = (phase.strip()).upper()
+
     finp = open( inp_fname, 'r' )
     # loop through the file until EOF is reached
     numvp = 0
@@ -1128,50 +1136,45 @@ def read_pass_ele(maxn,inp_fname,phase):
         # EOF
         if not text:
             break
-        #end if
 
         # upper case
         textUpper = (text.strip()).upper()
-	phase = phase.upper()
-	
-	#print "phase = ", phase
-        uphase = (phase.strip()).upper()
-        
+
         # *Element line
-        if( textUpper.startswith(uphase) ):
-               for iii in range(maxn):
-	           text = finp.readline()
-                   textUpper = (text.strip()).upper()
-		   if(textUpper.startswith('*SURFACE')): 
-		      break
-		   elif(textUpper.startswith('*NSET')): 
-		      break
-		   elif(textUpper.startswith('*ELSET')): 
-		      break
-		   elif(textUpper.startswith('**')): 
-		      break
-		   else: 
-   	              dataline = (text.strip()).split( ',' )     
-		      #print int(dataline[1]),int(dataline[2])   	                 
-                      #print len(dataline)
-                      for ie in range(len(dataline)):                        
-                          if(dataline[ie]):   
-                             if(numvp==0): 
-			        vp[0]=dataline[ie]
-                                numvp += 1         
-			     else: 
-			        vp.append(dataline[ie])            
+        if(textUpper.startswith(uphase) ):
+            for iii in range(maxn):
+                text = finp.readline()
+                textUpper = (text.strip()).upper()
+                if(textUpper.startswith('*SURFACE')):
+                    break
+                elif(textUpper.startswith('*NSET')):
+                    break
+                elif(textUpper.startswith('*ELSET')):
+                    break
+                elif(textUpper.startswith('**')):
+                    break
+                else:
+                    dataline = (text.strip()).split( ',' )
+                    #print int(dataline[1]),int(dataline[2])
+                    #print len(dataline)
+                    for ie in range(len(dataline)):
+                        if(dataline[ie]):
+                            if(numvp==0):
+                                vp[0]=dataline[ie]
+                                numvp += 1
+                            else:
+                                vp.append(dataline[ie])
                                 numvp += 1			  		         
-               break           
+                    break
     # end while
     finp.close()
     
     # check whether the Job file is processed properly
     if (numvp > 0):
-        print "weld pass element have been successfully read!"  
+        print("weld pass element have been successfully read!")
     else:
-	print "phase = ", phase
-        print "Error: No weld pass element found in the job file!"
+        print( "phase = ", phase)
+        print( "Error: No weld pass element found in the job file!")
         return 1
         
     return numvp,vp 
@@ -1365,7 +1368,7 @@ def output_ini(out_fname,preheat,interpass):
 
     out_seq = data_IO.open_file(out_fname, 'w' )
     
-    text = '*INITIAL CONDITIONS,TYPE=TEMP'
+    text = '*INITIAL CONDITIONS,TYPE=TEMPERATURE'
     out_seq.write(str(text) + '\n')
     text = ' ALLND, ' + str(preheat)
     out_seq.write(str(text) + '\n') 
@@ -1385,6 +1388,10 @@ if( __name__ == "__main__" ):
     parser.add_argument("--model_inp_file", default= "./Model3d.inp",
                         help='The mesh file in .inp format (converted mesh from .unv by '
                              'unical) - default:"./Model3d.inp"')
+    parser.add_argument("--inputs_dir", default= "./inputs",
+                        help='The directory that has the eweld.in, eweld_boundary_condition.in, '
+                        'and eweld_preheat_interpass_temperature.in files - default:"./inputs"')
+
     parser.add_argument("--out_dir", default= "./",
                         help='The output directory - default:"./"')
     parser.add_argument("--log_dir", default= "./",
@@ -1392,6 +1399,7 @@ if( __name__ == "__main__" ):
 
 
     args = parser.parse_args()
+    inputs_dir = args.inputs_dir
     out_dir = args.out_dir
     log_dir = args.log_dir
 
@@ -1406,7 +1414,7 @@ if( __name__ == "__main__" ):
     #--------------------------------------------------------------
     # Read eweld.in
     #
-    eweld_file = os.path.join(cwd, "inputs/eweld.in")
+    eweld_file = os.path.join(inputs_dir, "eweld.in")
 
     (numWeld,myMaterial1,myMaterial2,FillerMaterial)=read_eweld_in(eweld_file)
     #--------------------------------------------------------------
@@ -1414,7 +1422,7 @@ if( __name__ == "__main__" ):
     # output model_ini_temperature.in
     #      
 
-    ini_file = os.path.join(cwd,"inputs/eweld_preheat_interpass_temperature.in")
+    ini_file = os.path.join(inputs_dir, "eweld_preheat_interpass_temperature.in")
     (preheat,interpass)=read_ini_in(ini_file)
 
     out_fname = os.path.join(out_dir, "model_ini_temperature.in")
@@ -1422,7 +1430,7 @@ if( __name__ == "__main__" ):
     #--------------------------------------------------------------
     # Read eweld_boundary_conditions.in
     #      
-    bc_file = os.path.join(cwd,"inputs/eweld_boundary_condition.in" )
+    bc_file = os.path.join(inputs_dir, "eweld_boundary_condition.in" )
 
     fix_dir = [[[],]*3]*100
     fix_cod = [[[],]*3]*100
@@ -1503,17 +1511,54 @@ if( __name__ == "__main__" ):
     #-----------------------------------------------------------------
     # Read and output group file
     #
+
+    # Create a subset of elements that contain the named element sets only
+    mesh = cu.Mesh()
+    mesh.read_mesh_from_inp(inp_fname)
+    mesh.remove_element_set_by_name('FilmSurface')
+    mesh_elements_in_sets = mesh.get_all_elements()
+    named_elements = []
+    named_element_types = []
+    for element in ele_id:
+        if element in mesh_elements_in_sets:
+            named_elements.append(element)
+            named_element_types.append(eletype[element])
+    print("len(named_elements): {:d}".format(len(named_elements)))
+
     model_group= os.path.join(out_dir, "model_group.in")
     out_group = data_IO.open_file(model_group, 'w' )
 
-    for ie in range(num_ele):
-        eleIn=ele_id[ie]
-        nodepe=eletype[eleIn]
+    # for ie in range(num_ele):
+    #     eleIn=ele_id[ie]
+    #     nodepe=eletype[eleIn]
+    for iElem, eleIn in enumerate(named_elements):
+        nodepe = named_element_types[iElem]
         ec=eleIn
         numD=8
-        if(nodepe==8): out_c3d8.write(str(eleIn).rjust(numD) + ", " + str(ele[ec][0]).rjust(numD) + ", " + str(ele[ec][1]).rjust(numD) + ", " + str(ele[ec][2]).rjust(numD) + ", " + str(ele[ec][3]).rjust(numD) + ", " + str(ele[ec][4]).rjust(numD) + ", " + str(ele[ec][5]).rjust(numD) + ", " + str(ele[ec][6]).rjust(numD) + ", " + str(ele[ec][7]).rjust(numD) + '\n')
-        if(nodepe==6): out_c3d6.write(str(eleIn).rjust(numD) + ", " + str(ele[ec][0]).rjust(numD) + ", " + str(ele[ec][1]).rjust(numD) + ", " + str(ele[ec][2]).rjust(numD) + ", " + str(ele[ec][3]).rjust(numD) + ", " + str(ele[ec][4]).rjust(numD) + ", " + str(ele[ec][5]).rjust(numD) + '\n')
-        if(nodepe==4): out_s4.write(str(eleIn).rjust(numD) + ", " + str(ele[ec][0]).rjust(numD) + ", " + str(ele[ec][1]).rjust(numD) + ", " + str(ele[ec][2]).rjust(numD) + ", " + str(ele[ec][3]).rjust(numD) + ", " + '\n')
+        if(nodepe==8):
+            out_c3d8.write(str(eleIn).rjust(numD) + ", " +
+                        str(ele[ec][0]).rjust(numD) + ", " +
+                        str(ele[ec][1]).rjust(numD) + ", " +
+                        str(ele[ec][2]).rjust(numD) + ", " +
+                        str(ele[ec][3]).rjust(numD) + ", " +
+                        str(ele[ec][4]).rjust(numD) + ", " +
+                        str(ele[ec][5]).rjust(numD) + ", " +
+                        str(ele[ec][6]).rjust(numD) + ", " +
+                        str(ele[ec][7]).rjust(numD) + '\n')
+        if(nodepe==6):
+            out_c3d6.write(str(eleIn).rjust(numD) + ", "
+                           + str(ele[ec][0]).rjust(numD) + ", "
+                           + str(ele[ec][1]).rjust(numD) + ", "
+                           + str(ele[ec][2]).rjust(numD) + ", "
+                           + str(ele[ec][3]).rjust(numD) + ", "
+                           + str(ele[ec][4]).rjust(numD) + ", "
+                           + str(ele[ec][5]).rjust(numD) + '\n')
+        if(nodepe==4):
+            out_s4.write(str(eleIn).rjust(numD) + ", "
+                         + str(ele[ec][0]).rjust(numD) + ", "
+                         + str(ele[ec][1]).rjust(numD) + ", "
+                         + str(ele[ec][2]).rjust(numD) + ", "
+                         + str(ele[ec][3]).rjust(numD) + ", " + '\n')
 	
     out_c3d8.close()
     out_c3d6.close()

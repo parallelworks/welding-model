@@ -6,7 +6,7 @@
 *************************************************************************************
 *HEADING  
  Welding Analysis 
-*PREPRINT, MODEL=YES, ECHO=NO, HISTORY=NO 
+** *PREPRINT, MODEL=YES, ECHO=NO, HISTORY=NO 
 *********------------- Node Coordinates -------------- ******************************
 ****
 **** Example for "model_node.in"
@@ -15,7 +15,9 @@
 **** 3,            -30.508,               12.7,          -298.3149
 **** ...
 ****
-*NODE, SYSTEM=R,NSET=ALLND,INPUT=model_node.in  
+** *NODE, SYSTEM=R,NSET=ALLND,INPUT=model_node.in  
+*NODE, NSET=ALLND
+*INCLUDE,INPUT=model_node.in  
 ********-------------- Element Connectivity ------------*****************************
 ****
 **** Example for "model_ele4.in"
@@ -98,5 +100,5 @@
 ****  
 *INCLUDE,INPUT=model_ini_temperature.in
 **********--------------------- Steps ------------------****************************
-*RESTART,WRITE,FREQ=50,OVERLAY
+** *RESTART,WRITE,FREQ=50,OVERLAY
 *INCLUDE,INPUT=model_step.in

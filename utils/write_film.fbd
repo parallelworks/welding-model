@@ -3,4 +3,4 @@ send all abq
 send all abq nam
 comp sFilmSurface do
 comp sFilmSurface do
-send sFilmSurface abq film 25.0 5.0e-4
+send sFilmSurface abq film 21.0 5.0e-4
