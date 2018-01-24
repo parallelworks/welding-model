@@ -39,7 +39,7 @@
 	 2) The files will be output: 
 		- =Mesh_3D.unv=
 		- =model_dflux.for=
-		- =model_step.in=
+		- =model_step1.in=
   3. Run 
 	 #+BEGIN_EXAMPLE
 	 python2 tools/unv2calculix.py Mesh_3D.unv Model3d
