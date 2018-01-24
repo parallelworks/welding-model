@@ -50,7 +50,7 @@ c********************************************************************
       
       write(10,'("*Layer,Number-of-Passes")')  
       do 70 i=1,layer
-         write(10,'(I2,1(",",I2))') layer,npass(i) 
+         write(10,'(I2,1(",",I2))') i,npass(i) 
  70   continue      
 
       do 20 i=1,layer
