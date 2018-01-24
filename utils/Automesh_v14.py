@@ -34,7 +34,23 @@ parser.add_argument("--out_dir", default= "./",
 parser.add_argument("--log_dir", default= "./",
                     help='The log directory (default:"./")')
 
+parser.add_argument("--write_seperate_step_files", dest='write_separate_step_files',
+                    action='store_true',
+                    help='If set, the step for each welding pass (depositing, heating '
+                         'and cooling steps) will be written into a separate '
+                         'file (e.g, model_step1.in, model_step2.in,...) - the default '
+                         'is to write all the steps into a single file (model_step.in)')
+
+parser.add_argument("--write_single_step_file", dest='write_separate_step_files',
+                    action='store_false',
+                    help='If set, a single file  (model_step.in) will be writen for all '
+                         'the simulation steps (also see --write_seperate_step_files). '
+                         'This is the default ')
+
+parser.set_defaults(write_separate_step_files=False)
+
 args = parser.parse_args()
+write_separate_step_files = args.write_separate_step_files
 out_dir = args.out_dir
 log_dir = args.log_dir
 
@@ -866,59 +882,82 @@ def dflux_output(jshape,pipe_D,nweld,cent,wp_dim_w,wp_dim_h,wp_P,wp_TS,wp_eff,le
 #-------------------- output step files ----------------------
 #------------------------- model_step.in --------------------------
 #-------------------------------------------------------------
-def step_output(jshape,pipe_D,nweld,wp_TS,length):
-    stepfile = open(os.path.join(out_dir, "model_step.in"), "w" )
-    for k in range(nweld):       
-      if(pipe_D > 0): length = 2.0*pi*(pipe_D/2.0-cent[k][1])     
-      tweld=length/wp_TS[k]
-      tini=tweld/1000.0
-      tmax=lwt/wp_TS[k]
-      ctime=60.0
-      cfinal=15000.0
-      stepfile.write('**********STEP ' + str(k*3+1) + ' Depositing********' + '\n')
-      stepfile.write('*STEP,INC=5000 '  + '\n')
-      stepfile.write('*UNCOUPLED TEMPERATURE-DISPLACEMENT,DELTMX=50000.0'  + '\n')
-      stepfile.write(' 0.1, 0.1, 1.0E-9, 0.1' + '\n')
-      if(k==0):      
-        stepfile.write('*MODEL CHANGE, TYPE=ELEMENT,REMOVE' + '\n')
-        for j in range(nweld-1):
-            jw=j+2
-            stepfile.write(' WP' + str(jw) + "_extruded," + '\n')
-        #endfor
-        stepfile.write('*FILM,OP=NEW'  + '\n')
-        stepfile.write('*INCLUDE,INPUT=model_film.in' + '\n')
-        stepfile.write('*NODE FILE' + '\n')
-        stepfile.write(' NT,U' + '\n')
-        stepfile.write('*EL FILE' + '\n')
-        stepfile.write(' S,HFL,PE' + '\n')
-      else:
-        stepfile.write('*MODEL CHANGE, TYPE=ELEMENT,ADD' + '\n')
-        stepfile.write(' WP' + str(k+1) + '_extruded,' + '\n')
-      #endif
-      stepfile.write('*END STEP' + '\n')
-      stepfile.write('************STEP  ' + str(k*3+2) + ' Heating**********' + '\n')
-      stepfile.write('*STEP,INC=5000'  + '\n')
-      stepfile.write('*UNCOUPLED TEMPERATURE-DISPLACEMENT,DELTMX=50000.0'  + '\n')
-      stepfile.write(" " + str(tini) + "," + str(tweld) + "," + '0.1E-09, ' + str(tmax) + '\n')
-      stepfile.write('*DFLUX,OP=NEW'  + '\n')
-      stepfile.write(' WP' + str(k+1) + '_extruded, BFNU' + '\n')
-      stepfile.write('*END STEP' + '\n')
-      stepfile.write('************STEP ' + str(k*3+3) + ' Cooling*********'  + '\n')
-      stepfile.write('*STEP,INC=5000'   + '\n')
-      stepfile.write('*UNCOUPLED TEMPERATURE-DISPLACEMENT,DELTMX=50000.0' + '\n')
-      if( (k+1) == nweld):
-        stepfile.write(' 0.1, ' + str(cfinal) + ', 1.0E-10,' + str(cfinal/3.0) + '\n')      
-      else:
-        stepfile.write(' 0.1, ' + str(ctime) + ', 1.0E-10,' + str(ctime/3.0) + '\n')
-      #endif
-      stepfile.write('*DFLUX,OP=NEW'  + '\n')
-      stepfile.write('*END STEP' + '\n')
-    #endfor
-    stepfile.close()    
-#enddef
+def step_output(jshape, pipe_D, nweld, wp_TS, length, separate_step_files=False):
+
+
+    ctime = 60.0
+    cfinal = 15000.0
+    for k in range(nweld):
+        if(pipe_D > 0):
+            length = 2.0*pi*(pipe_D/2.0-cent[k][1])
+        tweld=length/wp_TS[k]
+        tini=tweld/1000.0
+        tmax=lwt/wp_TS[k]
+
+        if separate_step_files:
+            step_file_name = "model_step{:d}.in".format(k+1)
+            stepfile = open(os.path.join(out_dir, step_file_name), "w")
+        else:
+            if k==0:
+                step_file_name = "model_step.in"
+                stepfile = open(os.path.join(out_dir, step_file_name), "w")
+
+        if separate_step_files & k>0:
+            stepfile.write('*restart, read \n')
+
+        stepfile.write('**********STEP ' + str(k*3+1) + ' Depositing********' + '\n')
+
+        if separate_step_files:
+            stepfile.write('*restart, write \n')
+
+        stepfile.write('*STEP,INC=5000 '  + '\n')
+        stepfile.write('*UNCOUPLED TEMPERATURE-DISPLACEMENT,DELTMX=50000.0'  + '\n')
+        stepfile.write(' 0.1, 0.1, 1.0E-9, 0.1' + '\n')
+        if(k==0):
+            stepfile.write('*MODEL CHANGE, TYPE=ELEMENT,REMOVE' + '\n')
+            for j in range(nweld-1):
+                jw=j+2
+                stepfile.write(' WP' + str(jw) + "_extruded," + '\n')
+
+            stepfile.write('*FILM,OP=NEW'  + '\n')
+            stepfile.write('*INCLUDE,INPUT=model_film.in' + '\n')
+            stepfile.write('*NODE FILE' + '\n')
+            stepfile.write(' NT,U' + '\n')
+            stepfile.write('*EL FILE' + '\n')
+            stepfile.write(' S,HFL,PE' + '\n')
+        else:
+            stepfile.write('*MODEL CHANGE, TYPE=ELEMENT,ADD' + '\n')
+            stepfile.write(' WP' + str(k+1) + '_extruded,' + '\n')
+
+        stepfile.write('*END STEP' + '\n')
+
+        stepfile.write('************STEP  ' + str(k*3+2) + ' Heating**********' + '\n')
+        stepfile.write('*STEP,INC=5000'  + '\n')
+        stepfile.write('*UNCOUPLED TEMPERATURE-DISPLACEMENT,DELTMX=50000.0'  + '\n')
+        stepfile.write(" " + str(tini) + "," + str(tweld) + "," + '0.1E-09, ' + str(tmax) + '\n')
+        stepfile.write('*DFLUX,OP=NEW'  + '\n')
+        stepfile.write(' WP' + str(k+1) + '_extruded, BFNU' + '\n')
+        stepfile.write('*END STEP' + '\n')
+
+        stepfile.write('************STEP ' + str(k*3+3) + ' Cooling*********'  + '\n')
+        stepfile.write('*STEP,INC=5000'   + '\n')
+        stepfile.write('*UNCOUPLED TEMPERATURE-DISPLACEMENT,DELTMX=50000.0' + '\n')
+        if( (k+1) == nweld):
+            stepfile.write(' 0.1, ' + str(cfinal) + ', 1.0E-10,' + str(cfinal/3.0) + '\n')
+        else:
+            stepfile.write(' 0.1, ' + str(ctime) + ', 1.0E-10,' + str(ctime/3.0) + '\n')
+        stepfile.write('*DFLUX,OP=NEW'  + '\n')
+        stepfile.write('*END STEP' + '\n')
+
+        if separate_step_files:
+            stepfile.close()
+
+    if not separate_step_files:
+        stepfile.close()
+
 
 dflux_Creat = dflux_output(jshape,pipe_D,nweld,cent,wp_dim_w,wp_dim_h,wp_P,wp_TS,wp_eff,length)
-step_Creat = step_output(jshape,pipe_D,nweld,wp_TS,length)
+step_Creat = step_output(jshape,pipe_D,nweld,wp_TS,length, write_separate_step_files)
 #--------------------------------------------------------
 if (TeeType.find('T-Plate') != -1) or (TeeType.find('T-Pipe') != -1):
    if min(width1,width2) > 25.0:

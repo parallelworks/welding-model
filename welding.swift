@@ -68,7 +68,7 @@ file[] dflux_files;
 file[] step_files;
 file fMeshUnv          <strcat(caseOutDirs[i], "/Mesh_3D.unv")>;
 file fdflux            <strcat(caseOutDirs[i], "/model_dflux.for")>;
-file fsteps            <strcat(caseOutDirs[i], "/model_step.in")>;
+file fsteps            <strcat(caseOutDirs[i], "/model_step.tar")>;
 file autoMeshErr       <strcat(errorsDir, "autoMesh", i, ".err")>;                          
 file autoMeshOut       <strcat(logsDir, "autoMesh", i, ".out")>;                          
 (fMeshUnv, fdflux, fsteps, autoMeshErr, autoMeshOut) = runAutoMesh(feweldIn, feweldParams, farcEffcSetting, passCoords_files[i], utils);
