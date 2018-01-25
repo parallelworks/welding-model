@@ -698,22 +698,22 @@ cent=[ [[],]*2 ]*nweld
 weldcent=[ [[],]*3 ]*nweld
 
 for k in range(nweld):
-    cent[k][0]=0.0
-    cent[k][1]=0.0
     xmax=-1.0E10
     ymax=-1.0E10
     xmin=1.0E10
     ymin=1.0E10
+    center_point = [0.0, 0.0]
     for i in range(numpt[k]-1):
-        cent[k][0]=cent[k][0]+pt[k][i][0]
-        cent[k][1]=cent[k][1]+pt[k][i][1]     	
-        if(pt[k][i][0] > xmax): xmax=pt[k][i][0]	
+        center_point[0]=center_point[0]+pt[k][i][0]
+        center_point[1]=center_point[1]+pt[k][i][1]
+        if(pt[k][i][0] > xmax): xmax=pt[k][i][0]
         if(pt[k][i][0] < xmin): xmin=pt[k][i][0]
         if(pt[k][i][1] > ymax): ymax=pt[k][i][1]	
         if(pt[k][i][1] < ymin): ymin=pt[k][i][1] 
     nt=numpt[k]-1
-    cent[k][0]=cent[k][0]/nt
-    cent[k][1]=cent[k][1]/nt
+    center_point[0]=center_point[0]/nt
+    center_point[1]=center_point[1]/nt
+    cent[k]= center_point
     so=('center'+','+str(nt)+','+str(cent[k]))
     logfile.write(so +'\n')
     so=( 'xmin,xmax'+','+str(xmin)+','+str(xmax) )
@@ -742,7 +742,8 @@ for k in range(nweld):
         weldcent[k]=[-centt[0],-centt[1], 0.0] 
    
     so=('weld centroid = ' + str(weldcent[k]) )
-    logfile.write(so +'\n')    
+    logfile.write(so +'\n')
+
 #end for
 #-------------------------------------------------------------
 #---------------  output dflux subroutine  -------------------
@@ -751,13 +752,13 @@ for k in range(nweld):
 def dflux_output(jshape,pipe_D,nweld,cent,wp_dim_w,wp_dim_h,wp_P,wp_TS,wp_eff,length):
     dfluxfile = data_IO.open_file(os.path.join(out_dir,"model_dflux.for"), "w" )
     dfluxfile.write('! Abaqus interface ' + '\n')
-    dfluxfile.write('!      subroutine dflux(flux,sol,kstep,kinc,time,noel,npt,coords, ' + '\n') 
+    dfluxfile.write('!      subroutine dflux(flux,sol,kstep,kinc,time,noel,npt,coords, ' + '\n')
     dfluxfile.write('!     & jltyp,temp,press,sname) ' + '\n')     
     dfluxfile.write('            ' + '\n')    
     dfluxfile.write('! Calculix interface  ' + '\n')  
-    dfluxfile.write('      subroutine dflux(flux,sol,kstep,kinc,time,noel,npt,coords, ' + '\n')     
-    dfluxfile.write('     &     jltyp,temp,press,loadtype,area,vold,co,lakonl,konl, ' + '\n')     
-    dfluxfile.write('     &     ipompc,nodempc,coefmpc,nmpc,ikmpc,ilmpc,iscale,mi, ' + '\n')   
+    dfluxfile.write('      subroutine dflux(flux,sol,kstep,kinc,time,noel,npt,coords, ' + '\n')
+    dfluxfile.write('     &     jltyp,temp,press,loadtype,area,vold,co,lakonl,konl, ' + '\n')
+    dfluxfile.write('     &     ipompc,nodempc,coefmpc,nmpc,ikmpc,ilmpc,iscale,mi, ' + '\n')
     dfluxfile.write('     &     sti,xstateini,xstate,nstate_,dtime) ' + '\n')   
     dfluxfile.write(' ' + '\n')
     dfluxfile.write('      implicit real*8(a-h,o-z)     ' + '\n')
@@ -796,8 +797,8 @@ def dflux_output(jshape,pipe_D,nweld,cent,wp_dim_w,wp_dim_h,wp_P,wp_TS,wp_eff,le
     dfluxfile.write('      RETURN ' + '\n')
     dfluxfile.write('      END ' + '\n')
     dfluxfile.write(' ' + '\n')
-    dfluxfile.write('	subroutine heat_line_input(k,nwps,jshape,rad,power,speed,eff,thold, ' + '\n')
-    dfluxfile.write('     &  a,b,cf,cr,x0,y0,z0,x1,y1,z1) ' + '\n')
+    dfluxfile.write('	subroutine heat_line_input(k,nwps,jshape,rad,power,speed,eff, ' + '\n')
+    dfluxfile.write('     &  thold,a,b,cf,cr,x0,y0,z0,x1,y1,z1) ' + '\n')
     dfluxfile.write(' ' + '\n')
     dfluxfile.write('      implicit real*8(a-h,o-z) ' + '\n')
     dfluxfile.write(' ' + '\n')
@@ -808,7 +809,7 @@ def dflux_output(jshape,pipe_D,nweld,cent,wp_dim_w,wp_dim_h,wp_P,wp_TS,wp_eff,le
         dfluxfile.write('         jshape=' + str(jshape) + '\n')
         dfluxfile.write('         rad=' + str(pipe_D/2.0-cent[k][1]) + '\n')
         dfluxfile.write('         power=' + str(wp_P[k]) + '\n')
-        dfluxfile.write('          speed=' + str(wp_TS[k])  + '\n')
+        dfluxfile.write('          speed=' + str(-1.0*wp_TS[k])  + '\n')
         dfluxfile.write('           eff=' + str(wp_eff[k])  + '\n')
         dfluxfile.write('            thold=0.25 ' + '\n')
         dfluxfile.write('         a=' + str(wp_dim_w[k]) + '\n')
