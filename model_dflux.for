@@ -17,8 +17,8 @@
       pi=acos(-1.0) 
       k=(kstep+2)/3 
              
-      call heat_line_input(k,nwps,jshape,rad,power,speed,eff,thold, 
-     &  a,b,cf,cr,x0,y0,z0,x1,y1,z1) 
+      call heat_line_input(k,nwps,jshape,rad,power,speed,eff, 
+     &  thold,a,b,cf,cr,x0,y0,z0,x1,y1,z1) 
             
       timenet=time(1)-thold 
       if(jshape.eq.1) then 
@@ -44,125 +44,125 @@
       RETURN 
       END 
  
-	subroutine heat_line_input(k,nwps,jshape,rad,power,speed,eff,thold, 
-     &  a,b,cf,cr,x0,y0,z0,x1,y1,z1) 
+	subroutine heat_line_input(k,nwps,jshape,rad,power,speed,eff, 
+     &  thold,a,b,cf,cr,x0,y0,z0,x1,y1,z1) 
  
       implicit real*8(a-h,o-z) 
  
       if(k.eq.1) then 
          nwps=1 
          jshape=1
-         rad=-11.130816
+         rad=-2.14488883333
          power=5000.0
-          speed=3.175
+          speed=-3.175
            eff=0.5
             thold=0.25 
          a=3.80996
           b=2.7093335
            cf=3.80996
             cr=7.61992
-          x0=5.6166565
-           y0=11.130816
+          x0=0.0
+           y0=2.14488883333
             z0=0.0 
-          x1=5.6166565
-           y1=5.6166565
-            z1=-304.8
+          x1=0.0
+           y1=0.0
+            z1=-25.4
       elseif(k.eq.2 )then 
          nwps=1 
          jshape=1
-         rad=-11.130816
+         rad=-7.3795974
          power=5000.0
-          speed=3.175
+          speed=-3.175
            eff=0.5
             thold=0.25 
          a=3.3059595
           b=2.7939765
            cf=3.3059595
             cr=6.611919
-          x0=5.6166565
-           y0=11.130816
+          x0=-2.7759826
+           y0=7.3795974
             z0=0.0 
-          x1=5.6166565
-           y1=5.6166565
-            z1=-304.8
+          x1=-2.7759826
+           y1=-2.7759826
+            z1=-25.4
       elseif(k.eq.3 )then 
          nwps=1 
          jshape=1
-         rad=-11.130816
+         rad=-7.3860682
          power=5000.0
-          speed=3.175
+          speed=-3.175
            eff=0.5
             thold=0.25 
          a=3.3158775
           b=2.7939765
            cf=3.3158775
             cr=6.631755
-          x0=5.6166565
-           y0=11.130816
+          x0=2.736311
+           y0=7.3860682
             z0=0.0 
-          x1=5.6166565
-           y1=5.6166565
-            z1=-304.8
+          x1=2.736311
+           y1=2.736311
+            z1=-25.4
       elseif(k.eq.4 )then 
          nwps=1 
          jshape=1
-         rad=-11.130816
+         rad=-11.11358625
          power=5000.0
-          speed=3.175
+          speed=-3.175
            eff=0.5
             thold=0.25 
          a=2.4838405
           b=2.6774885
            cf=2.4838405
             cr=4.967681
-          x0=5.6166565
-           y0=11.130816
+          x0=-5.70676325
+           y0=11.11358625
             z0=0.0 
-          x1=5.6166565
-           y1=5.6166565
-            z1=-304.8
+          x1=-5.70676325
+           y1=-5.70676325
+            z1=-25.4
       elseif(k.eq.5 )then 
          nwps=1 
          jshape=1
-         rad=-11.130816
+         rad=-11.83318775
          power=5000.0
-          speed=3.175
+          speed=-3.175
            eff=0.5
             thold=0.25 
          a=2.1756105
           b=2.3788765
            cf=2.1756105
             cr=4.351221
-          x0=5.6166565
-           y0=11.130816
+          x0=-1.9824905
+           y0=11.83318775
             z0=0.0 
-          x1=5.6166565
-           y1=5.6166565
-            z1=-304.8
+          x1=-1.9824905
+           y1=-1.9824905
+            z1=-25.4
       elseif(k.eq.6 )then 
          nwps=1 
          jshape=1
-         rad=-11.130816
+         rad=-11.8504175
          power=5000.0
-          speed=3.175
+          speed=-3.175
            eff=0.5
             thold=0.25 
          a=2.1350935
           b=2.3626995
            cf=2.1350935
             cr=4.270187
-          x0=5.6166565
-           y0=11.130816
+          x0=1.83203025
+           y0=11.8504175
             z0=0.0 
-          x1=5.6166565
-           y1=5.6166565
-            z1=-304.8
+          x1=1.83203025
+           y1=1.83203025
+            z1=-25.4
       elseif(k.eq.7 )then 
          nwps=1 
          jshape=1
          rad=-11.130816
          power=5000.0
-          speed=3.175
+          speed=-3.175
            eff=0.5
             thold=0.25 
          a=2.5631835
@@ -174,7 +174,7 @@
             z0=0.0 
           x1=5.6166565
            y1=5.6166565
-            z1=-304.8
+            z1=-25.4
       endif  
        
       return     
