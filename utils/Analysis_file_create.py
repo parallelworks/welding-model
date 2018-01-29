@@ -965,6 +965,12 @@ def create_node_in(out_fname,num_node,nd_id,nd_cod):
 #
 ##------------------------------------------------------------------- 
 def output_bc(out_fname,num_node,nd_id,nd_cod,numfix,fix_cod,fix_dir,nfmin):
+    """ Write an input file in CalculiX format to specify the fix nodes on the mesh.
+
+    Given an array of fix point coordinates (fix_cod) and fix directions (fix_dir),
+    find the closest mesh nodes to each of the fix points and
+    fix that points in the required directions.
+    """
     fout = data_IO.open_file( out_fname, 'w' )
     
     for jjj in range(numfix):
@@ -1315,7 +1321,7 @@ def output_material(out_fname,numWeld,myMaterial1,myMaterial2,FillerMaterial):
     text = ' PA1_extruded, PA2_extruded, PA3_extruded '
     out_seq.write(str(text) + '\n')
 
-    text = '*ELSET,ELSET=MAT2'
+    text  = '*ELSET,ELSET=MAT2'
     out_seq.write(str(text) + '\n')
     text = ' PB1_extruded, PB2_extruded, PB3_extruded '
     out_seq.write(str(text) + '\n')    

@@ -38,12 +38,12 @@ parser.add_argument("--write_seperate_step_files", dest='write_separate_step_fil
                     action='store_true',
                     help='If set, the step for each welding pass (depositing, heating '
                          'and cooling steps) will be written into a separate '
-                         'file (e.g, model_step1.in, model_step2.in,...) - the default '
-                         'is to write all the steps into a single file (model_step1.in)')
+                         'file (e.g, model_step1.inp, model_step2.inp,...) - the default '
+                         'is to write all the steps into a single file (model_step1.inp)')
 
 parser.add_argument("--write_single_step_file", dest='write_separate_step_files',
                     action='store_false',
-                    help='If set, a single file  (model_step1.in) will be writen for all '
+                    help='If set, a single file  (model_step1.inp) will be writen for all '
                          'the simulation steps (also see --write_seperate_step_files). '
                          'This is the default ')
 
@@ -881,7 +881,7 @@ def dflux_output(jshape,pipe_D,nweld,cent,wp_dim_w,wp_dim_h,wp_P,wp_TS,wp_eff,le
 #enddef
 #-------------------------------------------------------------
 #-------------------- output step files ----------------------
-#------------------------- model_step.in --------------------------
+#------------------------- model_step.inp --------------------------
 #-------------------------------------------------------------
 def step_output(jshape, pipe_D, nweld, wp_TS, length, separate_step_files=False):
 
@@ -896,11 +896,11 @@ def step_output(jshape, pipe_D, nweld, wp_TS, length, separate_step_files=False)
         tmax=lwt/wp_TS[k]
 
         if separate_step_files:
-            step_file_name = "model_step{:d}.in".format(k+1)
+            step_file_name = "model_step{:d}.inp".format(k+1)
             stepfile = open(os.path.join(out_dir, step_file_name), "w")
         else:
             if k==0:
-                step_file_name = "model_step1.in"
+                step_file_name = "model_step1.inp"
                 stepfile = open(os.path.join(out_dir, step_file_name), "w")
 
         if separate_step_files & k>0:

@@ -101,4 +101,4 @@
 *INCLUDE,INPUT=model_ini_temperature.in
 **********--------------------- Steps ------------------****************************
 ** *RESTART,WRITE,FREQ=50,OVERLAY
-*INCLUDE,INPUT=model_step1.in
+*INCLUDE,INPUT=model_step1.inp
