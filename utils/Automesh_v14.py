@@ -925,7 +925,15 @@ def step_output(jshape, pipe_D, nweld, wp_TS, length, separate_step_files=False)
         stepfile.write('*STEP,INC=5000 '  + '\n')
         stepfile.write('*UNCOUPLED TEMPERATURE-DISPLACEMENT,DELTMX=50000.0'  + '\n')
         stepfile.write(' 0.1, 0.1, 1.0E-9, 0.1' + '\n')
+
         if(k==0):
+
+            stepfile.write('** Increase the maximum number of cutbacks from 5 to 12. \n')
+            stepfile.write('** The other settings are Calculix\'s default values. \n')
+            stepfile.write('*CONTROLS, PARAMETERS = TIME INCREMENTATION \n')
+            stepfile.write('4, 8, 9, 16, 10, 4, 0, 12 \n')
+            stepfile.write('0.25 \n')
+
             stepfile.write('*MODEL CHANGE, TYPE=ELEMENT,REMOVE' + '\n')
             for j in range(nweld-1):
                 jw=j+2
