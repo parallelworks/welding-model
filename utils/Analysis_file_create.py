@@ -15,12 +15,14 @@ import calculix_utils as cu
 
 cwd=os.getcwd() 
 
+
+
 ##------------------------------------------------------------------
 #
 # read eweld.in
 #
 ##-------------------------------------------------------------------
-def read_eweld_in(eweld_file):
+def read_eweld_in(eweld_file, logfile):
 
     filein = open(eweld_file, "r" )
     lines = filein.readlines()
@@ -320,7 +322,10 @@ def read_eweld_in(eweld_file):
 # read eweld_boundary_condition.in
 #
 ##-------------------------------------------------------------------
-def read_bc_in(bc_file):
+def read_bc_in(bc_file, logfile):
+
+    fix_dir = [[[],]*3]*100
+    fix_cod = [[[],]*3]*100
 
     filein = open(bc_file, "r" )
     lines = filein.readlines()
@@ -347,7 +352,7 @@ def read_bc_in(bc_file):
 # read eweld_boundary_condition.in
 #
 ##-------------------------------------------------------------------
-def read_ini_in(ini_file):
+def read_ini_in(ini_file, logfile):
 
     filein = open(ini_file, "r" )
     lines = filein.readlines()
@@ -441,7 +446,7 @@ def read_input(setfile):
 #
 ##-------------------------------------------------------------------
 #
-def read_coordinate_pre(maxn,inp_fname):
+def read_coordinate_pre(maxn,inp_fname, logfile):
     logfile.write('Read Node coordinate' +'\n')
     finp = data_IO.open_file(inp_fname)
     # loop through the file until EOF is reached
@@ -452,7 +457,6 @@ def read_coordinate_pre(maxn,inp_fname):
         # EOF
         if not text:
             break
-        #end if
 
         # upper case
         textUpper = (text.strip()).upper()
@@ -475,17 +479,21 @@ def read_coordinate_pre(maxn,inp_fname):
 
     # check whether the Job file is processed properly
     if (numNode > 0):
-        print "Nodes have been successfully read!"    
+        print( "Nodes have been successfully read!")
     else:
-        print "Error: No nodes found in the job file!"
+        print( "Error: No nodes found in the job file!")
         return 1
         
     return numNode,ndidmax
 #
 ##-----------
 #
-def read_coordinate(maxn,inp_fname):
-    logfile.write('Read Node coordinate' +'\n')       
+def read_coordinate(maxn,inp_fname, logfile, ndidmax,num_node):
+    logfile.write('Read Node coordinate' +'\n')
+
+    nd_id= [[[],]*1]*(ndidmax+1)
+    nd_cod=[[[],]*3]*(ndidmax+1)
+
     finp = open( inp_fname, 'r' )
     # loop through the file until EOF is reached
     numNode = 0
@@ -518,9 +526,9 @@ def read_coordinate(maxn,inp_fname):
 
     # check whether the Job file is processed properly
     if (numNode==num_node):
-        print "Nodes have been successfully read!"    
+        print( "Nodes have been successfully read!")
     else:
-        print "Error: No nodes found in the job file!"
+        print( "Error: No nodes found in the job file!")
         return 1
         
     return numNode,nd_id,nd_cod
@@ -531,7 +539,7 @@ def read_coordinate(maxn,inp_fname):
 #
 ##-------------------------------------------------------------------
 #
-def read_element_pre(maxn,inp_fname,out_fname):
+def read_element_pre(maxn,inp_fname,out_fname, logfile):
     logfile.write('Read Element' +'\n')       
     finp = open( inp_fname, 'r' )
     outf = open( out_fname, 'w' )
@@ -609,8 +617,17 @@ def read_element_pre(maxn,inp_fname,out_fname):
 #
 ##-----------
 #
-def read_element(maxn,inp_fname):
-    logfile.write('Read Element' +'\n')       
+def read_element(maxn,inp_fname, logfile, eleidmax, num_ele):
+
+    logfile.write('Read Element' +'\n')
+
+    ele_id=[[[],]*1]*(eleidmax+1)
+    eletype=[[[],]*1]*(eleidmax+1)
+
+    ele=[[],]*(eleidmax+1)
+    for i in range(eleidmax):
+        ele[i]=[[],]*8
+
     finp = open( inp_fname, 'r' )
     # loop through the file until EOF is reached
     numEle = 0
@@ -672,9 +689,9 @@ def read_element(maxn,inp_fname):
 
     # check whether the Job file is processed properly
     if (numEle==num_ele):
-        print "Elements have been successfully read!"  
+        print("Elements have been successfully read!")
     else:
-        print "Error: No elements found in the job file!"
+        print( "Error: No elements found in the job file!")
         return 1
         
     return numEle,ele_id,eletype,ele
@@ -685,7 +702,7 @@ def read_element(maxn,inp_fname):
 #
 ##-------------------------------------------------------------------
 #
-def read_film(maxn,inp_fname,out_fname):
+def read_film(maxn,inp_fname,out_fname, logfile):
     logfile.write('Read Film' +'\n')       
     finp = open( inp_fname, 'r' )
     outf = open( out_fname, 'w' )
@@ -735,7 +752,7 @@ def read_film(maxn,inp_fname,out_fname):
 #
 ##-------------------------------------------------------------------
 #
-def create_group(maxn,inp_fname,out_fname):
+def create_group(maxn,inp_fname,out_fname, logfile):
     logfile.write('Read group' +'\n')       
     finp = open( inp_fname, 'r' )
     outf = open( out_fname, 'w' )
@@ -795,7 +812,7 @@ def create_group(maxn,inp_fname,out_fname):
 #
 ##-------------------------------------------------------------------
 #
-def create_elet(inp_fname,out_fname):
+def create_elet(inp_fname,out_fname, logfile):
     logfile.write('Read ele_t.in' +'\n')       
     finp = open( inp_fname, 'r' )
     outf = open( out_fname, 'w' )
@@ -855,7 +872,7 @@ def create_elet(inp_fname,out_fname):
            
     return 0
 
-def create_eles(inp_fname,out_fname):
+def create_eles(inp_fname,out_fname, logfile):
     logfile.write('Read ele_t.in' +'\n')       
     finp = open( inp_fname, 'r' )
     outf = open( out_fname, 'w' )
@@ -898,11 +915,65 @@ def create_eles(inp_fname,out_fname):
     outf.close()
            
     return 0
-#
-##-----------
 
-################## Main ################################
- 
+
+def output_element_files(out_dir, inp_fname, ele, ele_id, eletype):
+    out_c3d8 = data_IO.open_file(os.path.join(out_dir, 'model_ele8.in'), 'w')
+    out_c3d6 = data_IO.open_file(os.path.join(out_dir, 'model_ele6.in'), 'w')
+    out_s4 = data_IO.open_file(os.path.join(out_dir, 'model_ele4.in'), 'w')
+
+    # inp_fname="ele_temp.in"
+    # model_ele_t="model_ele_t.in"
+    # out_fname=model_ele_t
+    # ttt=create_elet(inp_fname,out_fname)
+    # print "model_ele_s.in has been created!"
+
+    # inp_fname="ele_temp.in"
+    # model_ele_s="model_ele_s.in"
+    # out_fname=model_ele_s
+    # ttt=create_eles(inp_fname,out_fname)
+    # print "model_ele_s.in has been created!"
+
+    # -----------------------------------------------------------------
+    # Read and output group file
+    #
+
+    # Create a subset of elements that contain the named element sets only
+    mesh = cu.Mesh()
+    mesh.read_mesh_from_inp(inp_fname)
+    mesh.remove_element_set_by_name('FilmSurface')
+    mesh_elements_in_sets = mesh.get_all_elements()
+    named_elements = []
+    named_element_types = []
+    for element in ele_id:
+        if element in mesh_elements_in_sets:
+            named_elements.append(element)
+            named_element_types.append(eletype[element])
+    print("len(named_elements): {:d}".format(len(named_elements)))
+
+    # for ie in range(num_ele):
+    #     eleIn=ele_id[ie]
+    #     nodepe=eletype[eleIn]
+
+    for iElem, eleIn in enumerate(named_elements):
+        nodepe = named_element_types[iElem]
+        ec = eleIn
+        numD = 8
+        elemNodesStr = str(eleIn).rjust(numD) + ", " + \
+                       ", ".join(str(x).rjust(numD) for x in ele[ec][:nodepe]) + "\n"
+
+        if (nodepe == 8):
+            out_c3d8.write(elemNodesStr)
+
+        if (nodepe == 6):
+            out_c3d6.write(elemNodesStr)
+
+        if (nodepe == 4):
+            out_s4.write(elemNodesStr)
+
+    out_c3d8.close()
+    out_c3d6.close()
+    out_s4.close()
 
 
 def determine_cent(numxsym,xsymNode,xfull,yfull):   
@@ -922,7 +993,6 @@ def dist2p(x1,y1,x2,y2):
     b=y1-y2
     dist2p=sqrt(a*a+b*b)
     return dist2p
-
 
 
 def element_cent(eleIn,eletype,ele,nd_cod):
@@ -956,7 +1026,9 @@ def create_node_in(out_fname,num_node,nd_id,nd_cod):
     for iii in range(num_node):    
         node=nd_id[iii]
         [xt,yt,zt]=nd_cod[node]
-        fout.write(str(node).rjust(8) + ", " + str(xt).rjust(18) + ", " + str(yt).rjust(18) + ", " + str(zt).rjust(18) + '\n')
+
+        fout.write(str(node).rjust(8) + ", " + str(xt).rjust(18)
+                   + ", " + str(yt).rjust(18) + ", " + str(zt).rjust(18) + '\n')
     fout.close()
     return 0
 ##------------------------------------------------------------------
@@ -991,7 +1063,7 @@ def output_bc(out_fname,num_node,nd_id,nd_cod,numfix,fix_cod,fix_dir,nfmin):
         fout.write(str(nfmin[jjj]) + "," + '\n')
     #endfor
     
-    fout.write("*BOUNDARY,OP=NEW" + str(jjj) + '\n')
+    fout.write("*BOUNDARY,OP=NEW \n ")
     
     for jjj in range(numfix):
         if(fix_dir[jjj][0] >0): fout.write("FIX" + str(jjj) + ", 1,1" + '\n')        
@@ -1214,10 +1286,10 @@ def read_pass_dir(inp_fname,phase):
     
     # check whether the Job file is processed properly
     if (numvp == 1):
-        print "weld pass element have been successfully read!"  
+        print ("weld pass element have been successfully read!")
     else:
-        print "Error: No weld pass element found in the job file!"
-        print "phase = ", phase
+        print("Error: No weld pass element found in the job file!")
+        print("phase = ", phase)
         return 1
         
     return vp 
@@ -1251,7 +1323,7 @@ def read_pass_stop(inp_fname,phase):
     
     # check whether the Job file is processed properly
     if (numvp == 1):
-        print "weld pass element have been successfully read!"  
+        print("weld pass element have been successfully read!")
     else:
         vp=-99999
         
@@ -1318,18 +1390,18 @@ def output_material(out_fname,numWeld,myMaterial1,myMaterial2,FillerMaterial):
     
     text = '*ELSET,ELSET=MAT1'
     out_seq.write(str(text) + '\n')
-    text = ' PA1_extruded, PA2_extruded, PA3_extruded '
+    text = ' EPA1_extruded, EPA2_extruded, EPA3_extruded '
     out_seq.write(str(text) + '\n')
 
     text  = '*ELSET,ELSET=MAT2'
     out_seq.write(str(text) + '\n')
-    text = ' PB1_extruded, PB2_extruded, PB3_extruded '
+    text = ' EPB1_extruded, EPB2_extruded, EPB3_extruded '
     out_seq.write(str(text) + '\n')    
     
     text = "*ELSET,ELSET=WELD"
     out_seq.write(str(text) + '\n') 
     for i in range(numWeld):    
-        text = " WP" + str(i+1) + "_extruded, "
+        text = " EWP" + str(i+1) + "_extruded, "
         if(i==(numWeld-1)): 
            out_seq.write(str(text) + '\n')    
         else:
@@ -1376,24 +1448,28 @@ def output_ini(out_fname,preheat,interpass):
     
     text = '*INITIAL CONDITIONS,TYPE=TEMPERATURE'
     out_seq.write(str(text) + '\n')
-    text = ' ALLND, ' + str(preheat)
+    text = ' Nall, ' + str(preheat)
     out_seq.write(str(text) + '\n') 
     
     out_seq.close()
-    return 0                
+    return 0
+
+
+
 #---------------------------------------------------------------------------
 """
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 main program
 """
-if( __name__ == "__main__" ):
+
+def main():
 
     parser = argparse.ArgumentParser(
         description='Create BC, element, group, init_temperature, material and node files for a welding case')
 
-    parser.add_argument("--model_inp_file", default= "./Model3d.inp",
+    parser.add_argument("--model_inp_file", default= "./nodesElems.inp",
                         help='The mesh file in .inp format (converted mesh from .unv by '
-                             'unical) - default:"./Model3d.inp"')
+                             'unical) - default:"./nodesElems.inp"')
     parser.add_argument("--inputs_dir", default= "./inputs",
                         help='The directory that has the eweld.in, eweld_boundary_condition.in, '
                         'and eweld_preheat_interpass_temperature.in files - default:"./inputs"')
@@ -1404,10 +1480,34 @@ if( __name__ == "__main__" ):
                         help='The log directory - default:"./"')
 
 
+    parser.add_argument("--write_node_file", dest='write_node_file',
+                        action='store_true',
+                        help='If set, the model_node.in will be written - '
+                             'by default model_node.in file will not be written.')
+
+    parser.add_argument("--write_element_files", dest='write_element_files',
+                        action='store_true',
+                        help='If set, the element files will be written  '
+                             '(i.e, model_ele4.in, model_ele6.in and model_ele8.in) - '
+                             'by default element files will not be written.')
+
+    parser.add_argument("--write_group_file", dest='write_group_file',
+                        action='store_true',
+                        help='If set, the model_group.in will be written - '
+                             'by default model_group.in file will not be written.')
+
+    parser.set_defaults(write_element_files=False)
+    parser.set_defaults(write_group_file=False)
+    parser.set_defaults(write_node_file=False)
+
+
     args = parser.parse_args()
     inputs_dir = args.inputs_dir
     out_dir = args.out_dir
     log_dir = args.log_dir
+    write_element_files = args.write_element_files
+    write_group_file = args.write_group_file
+    write_node_file = args.write_node_file
 
     logfile = data_IO.open_file(os.path.join(log_dir, "Analysis_file_create.log"), "w" )
 
@@ -1422,14 +1522,14 @@ if( __name__ == "__main__" ):
     #
     eweld_file = os.path.join(inputs_dir, "eweld.in")
 
-    (numWeld,myMaterial1,myMaterial2,FillerMaterial)=read_eweld_in(eweld_file)
+    (numWeld,myMaterial1,myMaterial2,FillerMaterial)=read_eweld_in(eweld_file, logfile)
     #--------------------------------------------------------------
     # Read aeweld_preheat_interpass_temperature.in
     # output model_ini_temperature.in
     #      
 
     ini_file = os.path.join(inputs_dir, "eweld_preheat_interpass_temperature.in")
-    (preheat,interpass)=read_ini_in(ini_file)
+    (preheat,interpass)=read_ini_in(ini_file, logfile)
 
     out_fname = os.path.join(out_dir, "model_ini_temperature.in")
     ttt=output_ini(out_fname,preheat,interpass)
@@ -1438,9 +1538,7 @@ if( __name__ == "__main__" ):
     #      
     bc_file = os.path.join(inputs_dir, "eweld_boundary_condition.in" )
 
-    fix_dir = [[[],]*3]*100
-    fix_cod = [[[],]*3]*100
-    (numfix,fix_cod,fix_dir)=read_bc_in(bc_file)
+    (numfix,fix_cod,fix_dir)=read_bc_in(bc_file, logfile)
     #--------------------------------------------------------------
     # output model_materials.in
     #          
@@ -1454,7 +1552,7 @@ if( __name__ == "__main__" ):
     #     #--------------------------------------------------------------
     #     # Read node
     #     #
-    (num_node,ndidmax)=read_coordinate_pre(maxn,inp_fname)
+    (num_node,ndidmax)=read_coordinate_pre(maxn,inp_fname, logfile)
     print("Number of Node in global model =", num_node)
     print("Maximum Node id =", ndidmax)
     text = "Number of Node in global model =" + str(num_node)
@@ -1462,13 +1560,13 @@ if( __name__ == "__main__" ):
     text = "Maximum Node id =" + str(ndidmax)
     logfile.write(text + '\n')
 	
-    nd_id= [[[],]*1]*(ndidmax+1)
-    nd_cod=[[[],]*3]*(ndidmax+1)
-    (numNode,nd_id,nd_cod)=read_coordinate(maxn,inp_fname)
-        
-    model_node = os.path.join(out_dir, "model_node.in")
-    out_fname = model_node
-    ttt=create_node_in(out_fname,num_node,nd_id,nd_cod)
+    (numNode,nd_id,nd_cod)=read_coordinate(maxn,inp_fname, logfile, ndidmax,num_node)
+
+    if write_node_file:
+        model_node = os.path.join(out_dir, "model_node.in")
+        out_fname = model_node
+        ttt=create_node_in(out_fname,num_node,nd_id,nd_cod)
+
     #--------------------------------------------------------------
 	# output model_materials.in
 	#          
@@ -1478,8 +1576,10 @@ if( __name__ == "__main__" ):
     #-----------------------------------------------------------------
     # Read elements
     #
+
+
     out_fname="ele_temp.in"
-    (num_ele,eleidmax)=read_element_pre(maxn,inp_fname,out_fname)
+    (num_ele,eleidmax)=read_element_pre(maxn,inp_fname,out_fname, logfile)
     print("Number of element =", num_ele)
     print("Maximum ele id =", eleidmax)
 	
@@ -1488,92 +1588,16 @@ if( __name__ == "__main__" ):
     text = "Maximum ele id =" + str(eleidmax)
     logfile.write(text + '\n')
 
-    ele_id=[[[],]*1]*(eleidmax+1)
-    eletype=[[[],]*1]*(eleidmax+1)
-
-    ele=[[],]*(eleidmax+1)
-    for i in range(eleidmax):
-        ele[i]=[[],]*8
-	
-    (numEle,ele_id,eletype,ele)=read_element(maxn,inp_fname)
+    (numEle,ele_id,eletype,ele)=read_element(maxn,inp_fname, logfile, eleidmax, num_ele)
     print("numEle =", numEle)
-    
-    out_c3d8 = data_IO.open_file(os.path.join(out_dir, 'model_ele8.in'), 'w' )
-    out_c3d6 = data_IO.open_file(os.path.join(out_dir, 'model_ele6.in'), 'w' )
-    out_s4 = data_IO.open_file(os.path.join(out_dir, 'model_ele4.in'), 'w' )
 
-    #inp_fname="ele_temp.in"
-    #model_ele_t="model_ele_t.in"
-    #out_fname=model_ele_t
-    #ttt=create_elet(inp_fname,out_fname)
-    #print "model_ele_s.in has been created!"
+    if write_element_files:
+        output_element_files(out_dir, inp_fname, ele, ele_id, eletype)
 
-    #inp_fname="ele_temp.in"
-    #model_ele_s="model_ele_s.in"
-    #out_fname=model_ele_s
-    #ttt=create_eles(inp_fname,out_fname)
-    #print "model_ele_s.in has been created!"
-
-    #-----------------------------------------------------------------
-    # Read and output group file
-    #
-
-    # Create a subset of elements that contain the named element sets only
-    mesh = cu.Mesh()
-    mesh.read_mesh_from_inp(inp_fname)
-    mesh.remove_element_set_by_name('FilmSurface')
-    mesh_elements_in_sets = mesh.get_all_elements()
-    named_elements = []
-    named_element_types = []
-    for element in ele_id:
-        if element in mesh_elements_in_sets:
-            named_elements.append(element)
-            named_element_types.append(eletype[element])
-    print("len(named_elements): {:d}".format(len(named_elements)))
-
-    model_group= os.path.join(out_dir, "model_group.in")
-    out_group = data_IO.open_file(model_group, 'w' )
-
-    # for ie in range(num_ele):
-    #     eleIn=ele_id[ie]
-    #     nodepe=eletype[eleIn]
-    for iElem, eleIn in enumerate(named_elements):
-        nodepe = named_element_types[iElem]
-        ec=eleIn
-        numD=8
-        if(nodepe==8):
-            out_c3d8.write(str(eleIn).rjust(numD) + ", " +
-                        str(ele[ec][0]).rjust(numD) + ", " +
-                        str(ele[ec][1]).rjust(numD) + ", " +
-                        str(ele[ec][2]).rjust(numD) + ", " +
-                        str(ele[ec][3]).rjust(numD) + ", " +
-                        str(ele[ec][4]).rjust(numD) + ", " +
-                        str(ele[ec][5]).rjust(numD) + ", " +
-                        str(ele[ec][6]).rjust(numD) + ", " +
-                        str(ele[ec][7]).rjust(numD) + '\n')
-        if(nodepe==6):
-            out_c3d6.write(str(eleIn).rjust(numD) + ", "
-                           + str(ele[ec][0]).rjust(numD) + ", "
-                           + str(ele[ec][1]).rjust(numD) + ", "
-                           + str(ele[ec][2]).rjust(numD) + ", "
-                           + str(ele[ec][3]).rjust(numD) + ", "
-                           + str(ele[ec][4]).rjust(numD) + ", "
-                           + str(ele[ec][5]).rjust(numD) + '\n')
-        if(nodepe==4):
-            out_s4.write(str(eleIn).rjust(numD) + ", "
-                         + str(ele[ec][0]).rjust(numD) + ", "
-                         + str(ele[ec][1]).rjust(numD) + ", "
-                         + str(ele[ec][2]).rjust(numD) + ", "
-                         + str(ele[ec][3]).rjust(numD) + ", " + '\n')
-	
-    out_c3d8.close()
-    out_c3d6.close()
-    out_s4.close()
-    out_group.close()
-
-    out_fname=model_group
-    numgroup=create_group(maxn,inp_fname,out_fname)
-    print("model_group.in has been created!")
+    if write_group_file:
+        model_group_file= os.path.join(out_dir, "model_group.in")
+        numgroup=create_group(maxn,inp_fname, model_group_file, logfile)
+        print("model_group.in has been created!")
         
     #-----------------------------------------------------------------
     # Read film
@@ -1587,3 +1611,7 @@ if( __name__ == "__main__" ):
     os.remove("ele_temp.in")
              
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+
+
+if __name__ == "__main__":
+    main()

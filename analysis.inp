@@ -7,56 +7,39 @@
 *HEADING  
  Welding Analysis 
 ** *PREPRINT, MODEL=YES, ECHO=NO, HISTORY=NO 
+** The file nodesElems.inp contains node coordinates, element connectivities and
+** definitions for element and node groups.
 *********------------- Node Coordinates -------------- ******************************
 ****
-**** Example for "model_node.in"
+**** Example for node coordinates:
+**** *NODE, NSET=Nall
 **** 1,            -30.508,               12.7,                0.0
 **** 2,            -30.508,               12.7,             -304.8
 **** 3,            -30.508,               12.7,          -298.3149
 **** ...
 ****
-** *NODE, SYSTEM=R,NSET=ALLND,INPUT=model_node.in  
-*NODE, NSET=ALLND
-*INCLUDE,INPUT=model_node.in  
 ********-------------- Element Connectivity ------------*****************************
 ****
-**** Example for "model_ele4.in"
-**** 2109,     36085,     34685,     12736,     13247
-**** 2110,     34685,     36085,     12736,     33384
-**** 2111,     34784,     36954,     34581,     34008
+**** *ELEMENT, TYPE=C3D8, ELSET=Eall								  
+****    396,     2,     3,   182,   171,   420,   423,   426,   429
+****    397,   420,   423,   426,   429,   421,   424,   427,   430
+****    398,   421,   424,   427,   430,   422,   425,   428,   431
+****    399,     3,     4,   183,   182,   423,   432,   435,   426
 **** ...
-**** Example for "model_ele6.in"
-**** 102369,     33068,     33107,     33108,     32409,     32410,     32408
-**** 102370,     32792,     32864,     32865,     32098,     32164,     32165
-**** 102371,     32712,     32707,     32708,     32021,     32019,     32020
-**** ...
-**** Example for "model_ele8.in"
-**** 4,      414,      456,      422,      423,      846,      849,      852,      855
-**** 5,      846,      849,      852,      855,      847,      850,      853,      856
-**** 6,      847,      850,      853,      856,      848,      851,      854,      857
-**** ...
-*ELEMENT,TYPE=C3D4,ELSET=C3D4
-*INCLUDE,INPUT=model_ele4.in  
-*ELEMENT,TYPE=C3D6,ELSET=C3D6
-*INCLUDE,INPUT=model_ele6.in  
-*ELEMENT,TYPE=C3D8R,ELSET=C3D8
-*INCLUDE,INPUT=model_ele8.in  
 ********-------------- Element and Node Group ------------***************************
 **** Element and Node Group
 ****
-**** Example for "model_group.in"
-****
-**** *ELSET,ELSET=PART_A1
-**** 1,       2,       3,       4,       5,       6,       7,       8
-**** 9,      10,      11,      12,      13,      14,      15,      16
+**** Example for element set:
+**** ** Names based on WP7_extruded
+**** *ELSET,ELSET=EWP7_extruded 	  
+**** 3246, 						  
+**** 3247, 						  
+**** 3248, 						  
+**** 3249, 						  
+**** 3250, 						  
+**** 3251, 						  
 **** ...
-**** *ELSET,ELSET=WP1
-**** 9220,    9221,    9222,    9223,    9224,    9225,    9226,    9227
-**** 9228,    9229,    9230,    9231,    9232,    9233,    9234,    9235
-**** 9236,    9237,    9238,    9239,    9240,    9241,    9242,    9243
-**** ...
-****
-*INCLUDE,INPUT=model_group.in 
+*INCLUDE,INPUT=nodesElems.inp
 **********---------- Material Properties ------------------*************************
 ****
 **** Example for "model_material.in"

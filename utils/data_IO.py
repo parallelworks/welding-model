@@ -267,7 +267,12 @@ def read_floats_from_string(str2read, delimiter=None):
 
 
 def read_ints_from_string(str2read, delimiter=None):
+    if delimiter != '\n':
+        str2read = str2read.rstrip('\n')
+    if delimiter is not None:
+        str2read = str2read.replace(' ', '')
     strList = str2read.split(delimiter)
+    strList = list(filter(None,strList))
     intList = [int(i) for i in strList]
     return intList
 

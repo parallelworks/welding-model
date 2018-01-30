@@ -33,7 +33,7 @@ app (file fMeshUnv, file dfluxfile, file fsteps, file ferr, file fout) runAutoMe
 	bash "./utils/runSalome.sh" dirname(fMeshUnv) dirname(fout) filename(fpassCoords) stderr=filename(ferr) stdout=filename(fout);
 }
 
-app (file fMeshInp, file ferr, file fout) runUnical (file fMeshUnv, string meshInp_woExtension,file[] tools){
+app (file fMeshInp, file ferr, file fout) runUnv2calculix (file fMeshUnv, string meshInp_woExtension,file[] tools){
 	python2 "tools/unv2calculix.py" filename(fMeshUnv) meshInp_woExtension stderr=filename(ferr) stdout=filename(fout);
 }
 
@@ -79,9 +79,9 @@ step_files[i] = fsteps;
 file[] meshInp_files;
 string meshInp_woExtension = strcat(caseOutDirs[i], "/Model3d");
 file fMeshInp          <strcat(meshInp_woExtension, ".inp")>;
-file unicalErr         <strcat(errorsDir, "unical", i, ".err")>;                          
-file unicalOut         <strcat(logsDir, "unical", i, ".out")>;  
-(fMeshInp, unicalErr, unicalOut) = runUnical(meshUnv_files[i], meshInp_woExtension, tools);
+file unv2calculixErr         <strcat(errorsDir, "unv2calculix", i, ".err")>;                          
+file unv2calculixOut         <strcat(logsDir, "unv2calculix", i, ".out")>;  
+(fMeshInp, unv2calculixErr, unv2calculixOut) = runUnv2calculix(meshUnv_files[i], meshInp_woExtension, tools);
 meshInp_files[i] = fMeshInp;
 
 file[] film_files;

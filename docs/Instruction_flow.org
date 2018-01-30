@@ -40,16 +40,11 @@
 		- =Mesh_3D.unv=
 		- =model_dflux.for=
 		- =model_step1.inp=
-  3. Run 
+  3. Run =./utils/runCGX.sh= to generate the =nodesElems.inp= and =model_film.in= files (using cgx and unical):
 	 #+BEGIN_EXAMPLE
-	 python2 tools/unv2calculix.py Mesh_3D.unv Model3d
+	 ./utils/runCGX.sh Mesh_3D.unv ./utils/write_film.fbd 
 	 #+END_EXAMPLE
-	 =Model3d.inp= will be created.
-  4. To generate the =model_film.in= file (using cgx and unical), run:
-	 #+BEGIN_EXAMPLE
-	 ./utils/createFilm.sh Mesh_3D.unv ./utils/write_film.fbd model_film.in 
-	 #+END_EXAMPLE
-  5. Run 
+  4. Run 
 	 #+BEGIN_EXAMPLE
 	 python2 utils/Analysis_file_create.py 
 	 #+END_EXAMPLE
@@ -57,26 +52,21 @@
 	   - =./inputs/eweld.in=
 	   - =./inputs/eweld_boundary_condition.in=
 	   - =./inputs/eweld_preheat_interpass_temperature.in= 
-	   - =./Model3d.inp=
+	   - =./nodesElems.inp=
 	 + The files will be output:
 	   - =model_bc.in=
-	   - =model_ele4.in=
-	   - =model_ele6.in=
-	   - =model_ele8.in=
-	   - =model_group.in=
 	   - =model_ini_temperature.in=
 	   - =model_material.in=
-	   - =model_node.in=
-  6. Move =model_dflux.for= to the CalculiX directory (to =CalculiX-PW/src/=) and rename to =dflux.f=, and compile CalculiX
+  5. Move =model_dflux.for= to the CalculiX directory (to =CalculiX-PW/src/=) and rename to =dflux.f=, and compile CalculiX
 	 (see the notes in =CalculiX-PW/README.md= for compilation/installation of CalculiX).
-	 Or uncompress =tools/CalculiX-PW.tar= (works under Ubuntu 14.04, if all the required packages for CalculiX are installed):
+	 Or decompress =tools/CalculiX-PW.tar= (works under Ubuntu 14.04, if all the required packages for CalculiX are installed):
 	 #+BEGIN_EXAMPLE
 	 tar -xf tools/CalculiX-PW.tar
 	 #+END_EXAMPLE
-  7. Run =analysis.inp= with CalculiX
+  6. Run =analysis.inp= with CalculiX
 
 * Footnotes
 
-[fn:1] On Linux, compile 	 =determine_passes_arc_v4.out=, to get =determine_passes_arc_v4.out= via =gfortran determine_passes_arc_v4.for -o determine_passes_arc_v4.out=
+[fn:1] On Linux, compile =determine_passes_arc_v4.out=, to get =determine_passes_arc_v4.out= via =gfortran determine_passes_arc_v4.for -o determine_passes_arc_v4.out=
 
 

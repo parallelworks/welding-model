@@ -30,7 +30,7 @@ class Set:
 
     def read_members_from_inp(self, inp_file):
         self. members = data_IO.read_ints_from_file_line_offset(
-            inp_file, self.set_type + '=' + self.name, ',', end_flag='*')
+            inp_file, '*' + self.type + ',' + self.set_type + '=' + self.name, ',', end_flag='*')
 
 
 class ElementSet(Set):

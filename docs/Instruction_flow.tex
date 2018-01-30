@@ -1,4 +1,4 @@
-% Created 2018-01-29 Mon 13:46
+% Created 2018-01-30 Tue 13:54
 \documentclass[12pt,letterpaper]{article}
 \usepackage{graphicx,rotating,overpic,eepic,amssymb,amsmath,color,wasysym,hyperref,soul}
 %\usepackage[backend=biber,natbib=true,style=numeric,sorting=none,firstinits=true,maxbibnames=15]{biblatex}
@@ -95,7 +95,7 @@
 \item For automatic mesh, the following steps will be run:
 \begin{enumerate}
 \item Check if \texttt{pass\_coordinates.out} exists in \texttt{input} directory, if no, run \\
-\texttt{utils/determine\_passes\_arc\_v4.exe} to create \texttt{inputs/pass\_coordinates.out}\footnote{On Linux, compile      \texttt{determine\_passes\_arc\_v4.out}, to get \texttt{determine\_passes\_arc\_v4.out} via \texttt{gfortran determine\_passes\_arc\_v4.for -o determine\_passes\_arc\_v4.out}}:
+\texttt{utils/determine\_passes\_arc\_v4.exe} to create \texttt{inputs/pass\_coordinates.out}\footnote{On Linux, compile \texttt{determine\_passes\_arc\_v4.out}, to get \texttt{determine\_passes\_arc\_v4.out} via \texttt{gfortran determine\_passes\_arc\_v4.for -o determine\_passes\_arc\_v4.out}}:
 \begin{verbatim}
 ./utils/determine_passes_arc_v4.out inputs/
 \end{verbatim}
@@ -121,14 +121,9 @@ $SALOMEPATH/salome start -t -w 1 utils/Automesh_v14.py
 \item \texttt{model\_step1.inp}
 \end{itemize}
 \end{enumerate}
-\item Run 
+\item Run \texttt{./utils/runCGX.sh} to generate the \texttt{nodesElems.inp} and \texttt{model\_film.in} files (using cgx and unical):
 \begin{verbatim}
-python2 tools/unv2calculix.py Mesh_3D.unv Model3d
-\end{verbatim}
-\texttt{Model3d.inp} will be created.
-\item To generate the \texttt{model\_film.in} file (using cgx and unical), run:
-\begin{verbatim}
-./utils/createFilm.sh Mesh_3D.unv ./utils/write_film.fbd model_film.in
+./utils/runCGX.sh Mesh_3D.unv ./utils/write_film.fbd
 \end{verbatim}
 \item Run 
 \begin{verbatim}
@@ -140,23 +135,18 @@ python2 utils/Analysis_file_create.py
 \item \texttt{./inputs/eweld.in}
 \item \texttt{./inputs/eweld\_boundary\_condition.in}
 \item \texttt{./inputs/eweld\_preheat\_interpass\_temperature.in}
-\item \texttt{./Model3d.inp}
+\item \texttt{./nodesElems.inp}
 \end{itemize}
 \item The files will be output:
 \begin{itemize}
 \item \texttt{model\_bc.in}
-\item \texttt{model\_ele4.in}
-\item \texttt{model\_ele6.in}
-\item \texttt{model\_ele8.in}
-\item \texttt{model\_group.in}
 \item \texttt{model\_ini\_temperature.in}
 \item \texttt{model\_material.in}
-\item \texttt{model\_node.in}
 \end{itemize}
 \end{itemize}
 \item Move \texttt{model\_dflux.for} to the CalculiX directory (to \texttt{CalculiX-PW/src/}) and rename to \texttt{dflux.f}, and compile CalculiX
 (see the notes in \texttt{CalculiX-PW/README.md} for compilation/installation of CalculiX).
-Or uncompress \texttt{tools/CalculiX-PW.tar} (works under Ubuntu 14.04, if all the required packages for CalculiX are installed):
+Or decompress \texttt{tools/CalculiX-PW.tar} (works under Ubuntu 14.04, if all the required packages for CalculiX are installed):
 \begin{verbatim}
 tar -xf tools/CalculiX-PW.tar
 \end{verbatim}

@@ -4,23 +4,28 @@
 
 unvFile=$1
 fbdFile=$2
-filmFile=$3
-echo "Number of arguments: " 
-echo $#
 
-if [[ $# -ne 4 ]]; then
- 	allinoneFile=allinone.inp 
+
+if [[ $# -lt 3 ]]; then
+ 	filmFile=model_film.in 
 else
-	allinoneFile=$4
+	filmFile=$3 
 fi
-echo "allinoneFile: " 
-echo $allinoneFile
+
+
+if [[ $# -lt 4 ]]; then
+ 	nodesElemsFile=nodesElems.inp 
+else
+	nodesElemsFile=$4
+fi
+echo "nodesElemsFile: " 
+echo $nodesElemsFile
 
 chmod +x ./tools/unical
 chmod +x ./tools/cgx_2.12
 ./tools/unical $unvFile Model3d_4cgx.inp
 ./tools/cgx_2.12 -bg $fbdFile
 mv sFilmSurface.flm $filmFile 
-cat all.msh *.nam > $allinoneFile
+cat all.msh *.nam > $nodesElemsFile
 rm *.nam 
 rm all.msh
