@@ -33,17 +33,17 @@ app (file fMeshUnv, file dfluxfile, file fsteps, file ferr, file fout) runAutoMe
 	bash "./utils/runSalome.sh" dirname(fMeshUnv) dirname(fout) filename(fpassCoords) stderr=filename(ferr) stdout=filename(fout);
 }
 
-app (file fMeshInp, file ferr, file fout) runUnv2calculix (file fMeshUnv, string meshInp_woExtension,file[] tools){
-	python2 "tools/unv2calculix.py" filename(fMeshUnv) meshInp_woExtension stderr=filename(ferr) stdout=filename(fout);
-}
+// app (file fMeshInp, file ferr, file fout) runUnv2calculix (file fMeshUnv, string meshInp_woExtension,file[] tools){
+// 	python2 "tools/unv2calculix.py" filename(fMeshUnv) meshInp_woExtension stderr=filename(ferr) stdout=filename(fout);
+// }
 
-app (file ffilm, file ferr, file fout) createFilm (file fMeshUnv, file fflimFbd, file[] utils, file[] tools){
-	bash "./utils/createFilm.sh" filename(fMeshUnv) filename(fflimFbd) filename(ffilm)  stderr=filename(ferr) stdout=filename(fout);
+app (file ffilm, file fMeshInp, file ferr, file fout) runCGX (file fMeshUnv, file fflimFbd, file[] utils, file[] tools){
+	bash "./utils/runCGX.sh" filename(fMeshUnv) filename(fflimFbd) filename(ffilm) filename(fMeshInp) stderr=filename(ferr) stdout=filename(fout);
 }
 
 app (file analysis_files, file ferr, file fout) createAnalysisFiles (file feweldIn, file feweldBC, file feweldPreHeat, file fMeshInp, file[] utils){
 	python2 "utils/Analysis_file_create.py" strcat("--model_inp_file=",filename(fMeshInp))  strcat("--log_dir=",dirname(fout)) strcat("--out_dir=",dirname(analysis_files)) stderr=filename(ferr) stdout=filename(fout);
-	tar "-cf"  filename(analysis_files) "-C" dirname(analysis_files) "model_bc.in" "model_ele4.in" "model_ele6.in" "model_ele8.in" "model_group.in" "model_ini_temperature.in" "model_material.in" "model_node.in";
+	tar "-cf"  filename(analysis_files) "-C" dirname(analysis_files) "model_bc.in" "model_ini_temperature.in" "model_material.in";
 }
 
 app (file ccxBin, file ferr, file fout) compileCcx (file fdflux, file CalculiX, file utils[]){
@@ -77,20 +77,14 @@ dflux_files[i] = fdflux;
 step_files[i] = fsteps;
 
 file[] meshInp_files;
-string meshInp_woExtension = strcat(caseOutDirs[i], "/Model3d");
-file fMeshInp          <strcat(meshInp_woExtension, ".inp")>;
-file unv2calculixErr         <strcat(errorsDir, "unv2calculix", i, ".err")>;                          
-file unv2calculixOut         <strcat(logsDir, "unv2calculix", i, ".out")>;  
-(fMeshInp, unv2calculixErr, unv2calculixOut) = runUnv2calculix(meshUnv_files[i], meshInp_woExtension, tools);
-meshInp_files[i] = fMeshInp;
-
 file[] film_files;
+file fMeshInp          <strcat(caseOutDirs[i], "/Model3d.inp")>; 
 file ffilm                 <strcat(caseOutDirs[i], "/model_film.in")>;
-file createFilmErr         <strcat(errorsDir, "createFilm", i, ".err")>;                          
-file createFilmOut         <strcat(logsDir, "createFilm", i, ".out")>;  
-(ffilm, createFilmErr, createFilmOut) = createFilm(meshUnv_files[i], ffilmFbd, utils, tools);
+file runCGXErr         <strcat(errorsDir, "runCGX", i, ".err")>;                          
+file runCGXOut         <strcat(logsDir, "runCGX", i, ".out")>;  
+(ffilm, fMeshInp, runCGXErr, runCGXOut) = runCGX(meshUnv_files[i], ffilmFbd, utils, tools);
 film_files[i] = ffilm;
-
+meshInp_files[i] = fMeshInp;
 
 file analysis_files[];
 file fAnal                   <strcat(caseOutDirs[i], "/analFiles.tar")>;
