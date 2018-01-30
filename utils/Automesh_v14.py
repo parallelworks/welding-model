@@ -792,6 +792,17 @@ def dflux_output(jshape,pipe_D,nweld,cent,wp_dim_w,wp_dim_h,wp_P,wp_TS,wp_eff,le
     dfluxfile.write('      endif ' + '\n')
     dfluxfile.write(' ' + '\n')
     dfluxfile.write('      call dellipse(power,eff,a,b,cf,cr,xcod,ycod,zcod,qflux) ' + '\n')
+
+    dfluxfile.write(' \n'
+                    '!     set flux to zero during cooling or depositing: \n'
+                    '      if (mod(kstep,3).eq.0) then \n'
+                    '         qflux = 0 \n'
+                    '      endif \n'
+                    '      if (mod(kstep+2,3).eq.0) then \n'
+                    '         qflux = 0 \n'
+                    '      endif \n'
+                    '\n')
+
     dfluxfile.write('      flux(1)=qflux     ' + '\n')
     dfluxfile.write('                 ' + '\n')
     dfluxfile.write('      RETURN ' + '\n')

@@ -39,6 +39,15 @@
       endif 
  
       call dellipse(power,eff,a,b,cf,cr,xcod,ycod,zcod,qflux) 
+ 
+!     set flux to zero during cooling or depositing: 
+      if (mod(kstep,3).eq.0) then 
+         qflux = 0 
+      endif 
+      if (mod(kstep+2,3).eq.0) then 
+         qflux = 0 
+      endif 
+
       flux(1)=qflux     
                  
       RETURN 
