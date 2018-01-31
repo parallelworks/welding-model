@@ -4,6 +4,11 @@ type file;
 
 // ------ Input / Output Definitions -------
 
+string numProcs = arg("ProcessorsPerRun", "2");
+
+// Only for testing 
+string maxPasses2Run = "2";
+
 file feweldIn            <"inputs/eweld.in">;
 file feweldParams        <"inputs/eweld_weld_parameters.in">	;
 file feweldBC 		     <"inputs/eweld_boundary_condition.in">;
@@ -16,7 +21,9 @@ string errorsDir            = strcat(outDir, "errorFiles/");
 string logsDir              = strcat(outDir, "logFiles/");
 string caseDirRoot          = strcat(outDir, "case_"); 
 
-file ffilmFbd             <"utils/write_film.fbd">;
+file analysisFile           <"analysis.inp">;
+file ffilmFbd               <"utils/write_film.fbd">;
+file materials[] 		    <filesys_mapper;location="material", pattern="?*.in">;
 file utils[] 		        <filesys_mapper;location="utils", pattern="?*.*">;
 file tools[] 		        <filesys_mapper;location="tools", pattern="?*">;
 //file[] tools                <Ext; exec = "utils/mapper.sh", root = "tools">;
@@ -33,10 +40,6 @@ app (file fMeshUnv, file dfluxfile, file fsteps, file ferr, file fout) runAutoMe
 	bash "./utils/runSalome.sh" dirname(fMeshUnv) dirname(fout) filename(fpassCoords) stderr=filename(ferr) stdout=filename(fout);
 }
 
-// app (file fMeshInp, file ferr, file fout) runUnv2calculix (file fMeshUnv, string meshInp_woExtension,file[] tools){
-// 	python2 "tools/unv2calculix.py" filename(fMeshUnv) meshInp_woExtension stderr=filename(ferr) stdout=filename(fout);
-// }
-
 app (file ffilm, file fMeshInp, file ferr, file fout) runCGX (file fMeshUnv, file fflimFbd, file[] utils, file[] tools){
 	bash "./utils/runCGX.sh" filename(fMeshUnv) filename(fflimFbd) filename(ffilm) filename(fMeshInp) stderr=filename(ferr) stdout=filename(fout);
 }
@@ -50,6 +53,9 @@ app (file ccxBin, file ferr, file fout) compileCcx (file fdflux, file CalculiX, 
 	bash "./utils/compileCcx.sh" filename(fdflux) filename(CalculiX) filename(ccxBin) stderr=filename(ferr) stdout=filename(fout);
 }
 
+app (file ccxResults, file ferr, file fout) runCCX (file fsteps, file analysis_files, file ccxBin, file pass_coordinates, file ffilm, file fMeshInp, string numProcs, string maxPasses2Run, file analysisFile, file[] materials, file[] utils){
+	bash "./utils/runCCX.sh" filename(fsteps) filename(analysis_files) filename(ccxBin) filename(pass_coordinates) filename(ffilm) filename(fMeshInp) filename(ccxResults) numProcs maxPasses2Run stderr=filename(ferr) stdout=filename(fout);
+}
 //----------------Workflow-------------------
 
 // Create the weld pass coordinates
@@ -78,7 +84,7 @@ step_files[i] = fsteps;
 
 file[] meshInp_files;
 file[] film_files;
-file fMeshInp          <strcat(caseOutDirs[i], "/Model3d.inp")>; 
+file fMeshInp          <strcat(caseOutDirs[i], "/nodesElems.inp")>; 
 file ffilm                 <strcat(caseOutDirs[i], "/model_film.in")>;
 file runCGXErr         <strcat(errorsDir, "runCGX", i, ".err")>;                          
 file runCGXOut         <strcat(logsDir, "runCGX", i, ".out")>;  
@@ -100,3 +106,9 @@ file compileCCXOut               <strcat(logsDir, "compileCCX", i, ".out")>;
 (fccxExec, compileCCXErr, compileCCXOut) = compileCcx(dflux_files[i], CalculiX, utils);
 ccxExec_files[i] = fccxExec;
 
+
+file ccxResult_files[];
+file fccxResult        <strcat(caseOutDirs[i], "/ccx-exo-files.tar")>; 
+file runCCXErr         <strcat(errorsDir, "runCCX", i, ".err")>;                          
+file runCCXOut         <strcat(logsDir, "runCCX", i, ".out")>;  
+(fccxResult, runCCXErr, runCCXOut) = runCCX (step_files[i], analysis_files[i], ccxExec_files[i], passCoords_files[i], film_files[i], meshInp_files[i], numProcs, maxPasses2Run, analysisFile, materials, utils);
