@@ -86,6 +86,6 @@ echo Simulation Complete.
 echo ""
 
 # Compress exo files
-tar -cf results.tar  ?*.exo
+tar -cf results.tar  *.exo *.sta *.cvg
 cp results.tar $results_file
 

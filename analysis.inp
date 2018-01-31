@@ -82,6 +82,11 @@
 ****  ALLND,25.
 ****  
 *INCLUDE,INPUT=model_ini_temperature.in
+***************************************************
+** Set timpe steps for outputs
+*TIME POINTS,NAME=T1,GENERATE 
+0.0,1000.0,0.1
+************************************************* 
 **********--------------------- Steps ------------------****************************
 ** *RESTART,WRITE,FREQ=50,OVERLAY
 *INCLUDE,INPUT=model_step1.inp

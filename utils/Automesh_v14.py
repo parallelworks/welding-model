@@ -941,14 +941,14 @@ def step_output(jshape, pipe_D, nweld, wp_TS, length, separate_step_files=False)
 
             stepfile.write('*FILM,OP=NEW'  + '\n')
             stepfile.write('*INCLUDE,INPUT=model_film.in' + '\n')
-            stepfile.write('*NODE FILE' + '\n')
-            stepfile.write(' NT,U' + '\n')
-            stepfile.write('*EL FILE' + '\n')
-            stepfile.write(' S,HFL,PE' + '\n')
         else:
             stepfile.write('*MODEL CHANGE, TYPE=ELEMENT,ADD' + '\n')
             stepfile.write(' EWP' + str(k+1) + '_extruded,' + '\n')
 
+        stepfile.write('*NODE FILE, TIME POINTS=T1' + '\n')
+        stepfile.write(' NT,U' + '\n')
+        stepfile.write('*EL FILE, TIME POINTS=T1' + '\n')
+        stepfile.write(' S,HFL,PE' + '\n')
         stepfile.write('*END STEP' + '\n')
 
         stepfile.write('************STEP  ' + str(k*3+2) + ' Heating**********' + '\n')
@@ -967,6 +967,10 @@ def step_output(jshape, pipe_D, nweld, wp_TS, length, separate_step_files=False)
         else:
             stepfile.write(' 0.1, ' + str(ctime) + ', 1.0E-10,' + str(ctime/3.0) + '\n')
         stepfile.write('*DFLUX,OP=NEW'  + '\n')
+        stepfile.write('*NODE FILE, FREQUENCY=5 \n')
+        stepfile.write(' NT,U' + '\n')
+        stepfile.write('*EL FILE, FREQUENCY=5 ' + '\n')
+        stepfile.write(' S,HFL,PE' + '\n')
         stepfile.write('*END STEP' + '\n')
 
         if separate_step_files:
