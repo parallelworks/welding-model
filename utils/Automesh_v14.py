@@ -914,7 +914,7 @@ def step_output(jshape, pipe_D, nweld, wp_TS, length, separate_step_files=False)
                 step_file_name = "model_step1.inp"
                 stepfile = open(os.path.join(out_dir, step_file_name), "w")
 
-        if separate_step_files & k>0:
+        if separate_step_files and (k>0):
             stepfile.write('*restart, read \n')
 
         stepfile.write('**********STEP ' + str(k*3+1) + ' Depositing********' + '\n')
