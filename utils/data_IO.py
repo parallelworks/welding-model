@@ -120,6 +120,10 @@ def list2string(inputList):
     return '[%s]' % ', '.join(map(str, inputList))
 
 
+def string2list(input_string, delimiter=','):
+    return [x.strip() for x in input_string.split(delimiter)]
+
+
 def read_floats_from_file_pointer(file_pointer, flag_str, num_data,
                                   delimiter=None, startIndex=0):
     data = []

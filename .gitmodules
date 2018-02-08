@@ -1,3 +1,6 @@
-[submodule "tools/CalculiX-PW"]
+[submodule "CalculiX-PW"]
 	path = CalculiX-PW
 	url = git@github.com:parallelworks/CalculiX-PW.git
+[submodule "mexdex"]
+	path = mexdex
+	url = git@github.com:parallelworks/mexdex.git

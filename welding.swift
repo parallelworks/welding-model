@@ -4,10 +4,10 @@ type file;
 
 // ------ Input / Output Definitions -------
 
-string numProcs = arg("ProcessorsPerRun", "2");
+string numProcs = arg("ProcessorsPerRun", "4");
 
 // Only for testing 
-string maxPasses2Run = "2";
+string maxPasses2Run = "3";
 
 file feweldIn            <"inputs/eweld.in">;
 file feweldParams        <"inputs/eweld_weld_parameters.in">	;
@@ -108,7 +108,7 @@ ccxExec_files[i] = fccxExec;
 
 
 file ccxResult_files[];
-file fccxResult        <strcat(caseOutDirs[i], "/ccx-exo-files.tar")>; 
+file fccxResult        <strcat(caseOutDirs[i], "/ccx-results.tar")>; 
 file runCCXErr         <strcat(errorsDir, "runCCX", i, ".err")>;                          
 file runCCXOut         <strcat(logsDir, "runCCX", i, ".out")>;  
 (fccxResult, runCCXErr, runCCXOut) = runCCX (step_files[i], analysis_files[i], ccxExec_files[i], passCoords_files[i], film_files[i], meshInp_files[i], numProcs, maxPasses2Run, analysisFile, materials, utils);
