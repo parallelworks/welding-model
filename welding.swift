@@ -134,20 +134,10 @@ file runCCXOut         <strcat(logsDir, "runCCX", i, ".out")>;
 ccxResult_files[i] = fccxResult;
 
 file[] mexCsvFiles;
-// string mexSettings        = strcat(settingsDir, "mex/");
-// string mexErrorsDir       = strcat(errorsDir, "mex/");
-// string mexLogsDir         = strcat(logsDir, "mex/");
-
-string mexInputDir        = caseOutDirs[i];
 string mexOutputDir       = strcat(caseOutDirs[i], "mex/");
-
-// file fsteps               <strcat(mexInputDir, "/model_step.tar")>;
-// file fccxResults          <strcat(mexInputDir, "/ccx-results.tar")>; 
-// file fpassCoords 	      <strcat(mexInputDir, "/pass_coordinates.out")>;
-
+// Can I move these to lib/mex if I have a loop here?
+file mexCsvOut            <strcat(mexOutputDir, "metrics.csv")>;
 file fmexPngs[]           <filesys_mapper;location=mexOutputDir>;
-// file mexCsvOut            <strcat(mexOutputDir, "metrics.csv")>;
-// file fmexErr              <strcat(mexErrorsDir, "mex", i ,".err")>;
-// file fmexLog              <strcat(mexLogsDir, "mex", i, ".out")>;
+//
 (mexCsvOut, fmexPngs, fmexErr, fmexLog) = runMex(step_files[i], ccxResult_files[i], fmex_kpi, mexOutputDir, passCoords_files[i], maxPasses2Run, mex_utils, ccx_utils);
 mexCsvFiles[i] = mexCsvOut;

@@ -1,3 +1,6 @@
+# This workflow is a tester/runner for the mex app (in lib/mex.swift app).
+# Run this workflow from the root directory of the repository
+
 import "stdlib.v2";
 import "lib/mex";
 
@@ -33,7 +36,7 @@ file fsteps               <strcat(mexInputDir, "/model_step.tar")>;
 file fccxResults          <strcat(mexInputDir, "/ccx-results.tar")>; 
 file fpassCoords 	      <strcat(mexInputDir, "/pass_coordinates.out")>; 
 
+file mexCsvOut            <strcat(mexOutputDir, "metrics.csv")>;
 file fmexPngs[]           <filesys_mapper;location=mexOutputDir>;
-
 (mexCsvOut, fmexPngs, fmexErr, fmexLog) = runMex(fsteps, fccxResults, fmex_kpi, mexOutputDir, fpassCoords, maxPasses2Run, mex_utils, ccx_utils);
 mexCsvFiles[i] = mexCsvOut;
