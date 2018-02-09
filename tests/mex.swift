@@ -33,6 +33,7 @@ string[] caseOutDirs;
 caseOutDirs[i]            = strcat(caseDirRoot, i,"/");
 file[] mexCsvFiles;
 
+// string mexInputDir        = caseOutDirs[i];
 string mexInputDir        = strcat(inputDir, "mex/");
 string mexOutputDir       = strcat(caseOutDirs[i], "mex/");
 string mexSettings        = strcat(settingsDir, "mex/");

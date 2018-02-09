@@ -1,4 +1,5 @@
 import "stdlib.v2";
+import "lib/mex";
 
 type file;
 
@@ -9,26 +10,35 @@ string numProcs = arg("ProcessorsPerRun", "4");
 // Only for testing 
 string maxPasses2Run = "3";
 
-file feweldIn            <"inputs/eweld.in">;
-file feweldParams        <"inputs/eweld_weld_parameters.in">	;
-file feweldBC 		     <"inputs/eweld_boundary_condition.in">;
-file feweldPreHeat 	     <"inputs/eweld_preheat_interpass_temperature.in">;
-file feweldTempMonitor 	 <"inputs/eweld_temperature_monitor.in">;
-file farcEffcSetting      <"setting/Setting_arc_efficiency_dfault.in">;
+string inputDir           = "inputs/";
+string outDir             = "results/";
+string modelsDir          = "utils/";
+string settingsDir        = "setting/";
+string caseDirRoot        = strcat(outDir, "case_"); 
+string errorsDir          = strcat(outDir, "errorFiles/");
+string logsDir            = strcat(outDir, "logFiles/");
 
-string outDir               = "results/";
-string errorsDir            = strcat(outDir, "errorFiles/");
-string logsDir              = strcat(outDir, "logFiles/");
-string caseDirRoot          = strcat(outDir, "case_"); 
+
+file feweldIn             <strcat(inputDir, "eweld.in")>;
+file feweldParams         <strcat(inputDir, "eweld_weld_parameters.in")>;
+file feweldBC 		      <strcat(inputDir, "eweld_boundary_condition.in")>;
+file feweldPreHeat 	      <strcat(inputDir, "eweld_preheat_interpass_temperature.in")>;
+file feweldTempMonitor 	  <strcat(inputDir, "eweld_temperature_monitor.in")>;
+file farcEffcSetting      <strcat(settingsDir, "Setting_arc_efficiency_dfault.in")>;
+
+file fmex_kpi             <strcat(mexSettings, "/welding_anim.json")>;
 
 file analysisFile           <"analysis.inp">;
 file ffilmFbd               <"utils/write_film.fbd">;
 file materials[] 		    <filesys_mapper;location="material", pattern="?*.in">;
-file utils[] 		        <filesys_mapper;location="utils", pattern="?*.*">;
+
+file utils[] 		        <filesys_mapper;location=modelsDir, pattern="?*.*">;
 file tools[] 		        <filesys_mapper;location="tools", pattern="?*">;
 
-file mex_utils[]          <filesys_mapper;location="utils/mexdex", pattern="?*.*">;
-file ccx_utils[]          <filesys_mapper;location="utils/calculix", pattern="?*.*">;
+# string mex_utilsDir       = strcat(modelsDir, "/mexdex");
+# string ccx_utilsDir       = strcat(modelsDir, "/calculix");
+# file mex_utils[]          <filesys_mapper;location=mex_utilsDir, pattern="?*.*">;
+# file ccx_utils[]          <filesys_mapper;location=ccx_utilsDir, pattern="?*.*">;
 
 //file[] tools                <Ext; exec = "utils/mapper.sh", root = "tools">;
 file CalculiX               <"tools/CalculiX-PW.tar">;
@@ -60,6 +70,11 @@ app (file ccxBin, file ferr, file fout) compileCcx (file fdflux, file CalculiX, 
 app (file ccxResults, file ferr, file fout) runCCX (file fsteps, file analysis_files, file ccxBin, file pass_coordinates, file ffilm, file fMeshInp, string numProcs, string maxPasses2Run, file analysisFile, file[] materials, file[] utils, file[] ccx_utils){
 	bash "./utils/runCCX.sh" filename(fsteps) filename(analysis_files) filename(ccxBin) filename(pass_coordinates) filename(ffilm) filename(fMeshInp) filename(ccxResults) numProcs maxPasses2Run stderr=filename(ferr) stdout=filename(fout);
 }
+
+# app (file fmexCsv, file[] fmexpngs, file ferr, file fout) runMex (file fsteps, file fccxResults, file fmex_kpi, string mexOutputDir, file fpassCoords, string maxPasses2Run, file[] mex_utils, file[] ccx_utils){
+# 	bash "./utils/mexdex/extract.sh" filename(fsteps) filename(fccxResults) filename(fmex_kpi) mexOutputDir filename(fmexCsv) filename(fpassCoords) maxPasses2Run stderr=filename(ferr) stdout=filename(fout);
+# }
+
 //----------------Workflow-------------------
 
 // Create the weld pass coordinates
@@ -116,3 +131,23 @@ file fccxResult        <strcat(caseOutDirs[i], "/ccx-results.tar")>;
 file runCCXErr         <strcat(errorsDir, "runCCX", i, ".err")>;                          
 file runCCXOut         <strcat(logsDir, "runCCX", i, ".out")>;  
 (fccxResult, runCCXErr, runCCXOut) = runCCX (step_files[i], analysis_files[i], ccxExec_files[i], passCoords_files[i], film_files[i], meshInp_files[i], numProcs, maxPasses2Run, analysisFile, materials, utils, ccx_utils);
+ccxResult_files[i] = fccxResult;
+
+file[] mexCsvFiles;
+// string mexSettings        = strcat(settingsDir, "mex/");
+// string mexErrorsDir       = strcat(errorsDir, "mex/");
+// string mexLogsDir         = strcat(logsDir, "mex/");
+
+string mexInputDir        = caseOutDirs[i];
+string mexOutputDir       = strcat(caseOutDirs[i], "mex/");
+
+// file fsteps               <strcat(mexInputDir, "/model_step.tar")>;
+// file fccxResults          <strcat(mexInputDir, "/ccx-results.tar")>; 
+// file fpassCoords 	      <strcat(mexInputDir, "/pass_coordinates.out")>;
+
+file fmexPngs[]           <filesys_mapper;location=mexOutputDir>;
+// file mexCsvOut            <strcat(mexOutputDir, "metrics.csv")>;
+// file fmexErr              <strcat(mexErrorsDir, "mex", i ,".err")>;
+// file fmexLog              <strcat(mexLogsDir, "mex", i, ".out")>;
+(mexCsvOut, fmexPngs, fmexErr, fmexLog) = runMex(step_files[i], ccxResult_files[i], fmex_kpi, mexOutputDir, passCoords_files[i], maxPasses2Run, mex_utils, ccx_utils);
+mexCsvFiles[i] = mexCsvOut;
