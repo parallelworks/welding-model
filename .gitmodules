@@ -2,5 +2,5 @@
 	path = CalculiX-PW
 	url = git@github.com:parallelworks/CalculiX-PW.git
 [submodule "mexdex"]
-	path = mexdex
+	path = utils/mexdex
 	url = git@github.com:parallelworks/mexdex.git

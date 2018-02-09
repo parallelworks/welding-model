@@ -1,20 +1,10 @@
 import sys
 import data_IO
+from calculix import calculix_utils 
 
-coor_pass_file = data_IO.setOptionalSysArgs(sys.argv, 'pass_coordinates.out',1)
-fcp = data_IO.open_file(coor_pass_file)
+pass_coor_file = data_IO.setOptionalSysArgs(sys.argv, 'pass_coordinates.out', 1)
 
-# First get the number of layers:
-num_layers = data_IO.read_int_from_file_line_offset(fcp,'Number-of-Layers')
+weld_passes = calculix_utils.WeldPasses(pass_coor_file)
 
-# Then, read the passes in each layer
-num_passes = 0
-for layer in range(num_layers):
-    data = data_IO.read_ints_from_file_line_offset(fcp,'Layer,Number-of-Passes',
-                                                   delimiter=',', offset=layer,end_line=1)
-    num_passes = num_passes + data[1]
+print(weld_passes.num_passes)
 
-print(num_passes)
-
-
-fcp.close()

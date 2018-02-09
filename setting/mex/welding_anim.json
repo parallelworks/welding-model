@@ -1,0 +1,34 @@
+{
+  "domainU": {
+    "field": "U",
+	"colorByField" : "NT",
+	"max":"200",
+	"min":"20",
+	"representationType" : "Wireframe",
+    "image": "iso-TN",
+	"imageTimes": "{:f}",
+	"extractStatsTimes": "{:f}",
+	"imageName": "domainU.png",
+	"per-pass": "true",	  
+	"barTitle":"Temperature ($^{\\circ}$C)",
+    "ComponentTitle": "",
+    "type": "WarpByVector",
+	"scaleFactor": "10"
+  },
+  "domainU_anim": {
+    "field": "NT",
+	"max":"200",
+	"min":"20",
+	"representationType" : "Wireframe",
+    "image": "iso-TN",
+	"imageTimes": ":",
+	"bodyopacity":"0.3",
+	"imageName": "domainU/test_{}.png",
+	"animation": "true",
+	"per-pass": "false",
+	"extractStats": "false",
+	"barTitle":"Temperature ($^{\\circ}$C)",
+    "ComponentTitle": "",
+    "type": "Basic"
+  }
+}

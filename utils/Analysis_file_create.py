@@ -11,7 +11,7 @@ import shutil
 from math import *
 import argparse
 import data_IO
-import calculix_utils as cu
+from calculix import calculix_utils as cu
 
 cwd=os.getcwd() 
 
