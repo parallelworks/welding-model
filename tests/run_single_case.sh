@@ -2,6 +2,12 @@
 
 # Run a single case
 
+export SALOMEPATH=/home/marmar/programs-local/SALOME-8.2.0-UB14.04/
+export PARAVIEWPATH=/home/marmar/programs-local/ParaView-5.3.0-Qt5-OpenGL2-MPI-Linux-64bit/bin
+
+mkdir -p results/case_1/
+mkdir -p results/logFiles/
+
 # Create the pass_coordinates.out file:
 ./utils/determine_passes_arc_v4.out  results/case_1/ 
 
