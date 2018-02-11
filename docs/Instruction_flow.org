@@ -1,14 +1,13 @@
 #+LaTeX_CLASS: article-mine
 #+LATEX_HEADER: % To change the background color of verbatim sections in latex
-#+LATEX_HEADER: \colorlet{LightSteelBlue10}{LightSteelBlue1!50}
+#+LATEX_HEADER: \colorlet{LightSteelBlue10}{LightSteelBlue1!30}
 #+LATEX_HEADER: \colorlet{SteelBlue40}{SteelBlue4!60!black}
 #+LATEX_HEADER: \newcommand{\verbStyle}[1]{{\color{SteelBlue40}\colorbox{LightSteelBlue10}{{#1}}}}
 #+LATEX_HEADER: \let\OldTexttt\texttt
 #+LATEX_HEADER: \renewcommand{\texttt}[1]{\OldTexttt{\verbStyle{#1}}}
 #+OPTIONS: toc:nil
 #+TITLE: Instructions 
-#+Author: Yu-Ping Yang
-#+Date: December 20, 2017
+#+Author:
 
 - The following five files will be output from the interface (under =inputs/= directory):
   + =eweld.in=
@@ -28,18 +27,29 @@
   2. Run =utils/Automesh_v14.py= from SALOME's Python Console to create =Mesh_3D.unv=, or run 
 	 without Salome GUI:
 	 #+BEGIN_EXAMPLE
-	 $SALOMEPATH/salome start -t -w 1 utils/Automesh_v14.py
+	 $SALOMEPATH/salome start -t -w 1 utils/Automesh_v14.py \
+	 --write_separate_step_files
 	 #+END_EXAMPLE
-	 1) The files will be input:
+	 1) The input files are:
 		- =./inputs/eweld.in=
 		- =./inputs/eweld_weld_parameters.in=
 		- =./setting/Setting_arc_efficiency_dfault.in=
 		- =./inputs/pass_coordinates.out=
 		  
-	 2) The files will be output: 
+	 2) The output files will be:
 		- =Mesh_3D.unv=
 		- =model_dflux.for=
 		- =model_step1.inp=
+		- =model_step2.inp=
+		- =model_step3.inp=
+		- =model_step4.inp=
+		- =model_step5.inp=
+		- =model_step6.inp=
+		- =model_step7.inp=
+		*Note:* The =model_step.inp= file has been broken into several files \\ 
+		(=model_stepX.inp=) to
+		resolve and issue with post-processing of cases where elements get added during the simulation.
+		
   3. Run =./utils/runCGX.sh= to generate the =nodesElems.inp= and =model_film.in= files (using cgx and unical):
 	 #+BEGIN_EXAMPLE
 	 ./utils/runCGX.sh Mesh_3D.unv ./utils/write_film.fbd 
@@ -48,12 +58,12 @@
 	 #+BEGIN_EXAMPLE
 	 python2 utils/Analysis_file_create.py 
 	 #+END_EXAMPLE
-	 + The files will be input:
+	 + The input files are:
 	   - =./inputs/eweld.in=
 	   - =./inputs/eweld_boundary_condition.in=
 	   - =./inputs/eweld_preheat_interpass_temperature.in= 
 	   - =./nodesElems.inp=
-	 + The files will be output:
+	 + The output files will be: 
 	   - =model_bc.in=
 	   - =model_ini_temperature.in=
 	   - =model_material.in=
@@ -63,7 +73,50 @@
 	 #+BEGIN_EXAMPLE
 	 tar -xf tools/CalculiX-PW.tar
 	 #+END_EXAMPLE
-  6. Run =analysis.inp= with CalculiX
+	 *The script =./utils/compileCcx.sh= performs the above automatically on Ubuntu 14.04 if all required packages for compiling CalculiX are installed:*
+	 #+BEGIN_EXAMPLE
+	 ./utils/compileCcx.sh model_dflux.for tools/CalculiX-PW.tar ccx_2.12_MT  
+	 #+END_EXAMPLE
+  6. Run =analysis.inp= with CalculiX: 
+	 To get around an issue with post-processing of results in 
+	 cases with element addition/removal during simulation, we have
+	 divided the simulation into several steps. In each step, 
+	 the number of elements remain constant. To run the whole
+	 simulation, restart files written at the end of one step are
+	 used as a start point for the next step.  
+
+	 The bash script =./tests/runCCX_manual.sh= runs the multiple simulation steps 
+	 consecutively. When running =./utils/runCCX_manual.sh=, the number of processors can be specified
+	 (the default number of processors is 1):
+	 #+BEGIN_EXAMPLE
+	 ./tests/runCCX_manual.sh  4 
+	 #+END_EXAMPLE
+	 The output exo, sta and cvg files with be compressed in =ccx-results.tar= after the simulations
+	 are complete.
+  7. Post processing: 
+	 To post process the simulation results using Paraview, the Metrics Extraction Python 
+	 library can be used. The properties of image and metrics can be specified via a json file.
+	 An example json file is in [[/setting/mex/welding_anim.json]]. 
+	 For details of the json syntax please see \\
+	 https://github.com/parallelworks/MetricExtraction. 
+
+	 To generate images and animations and extract statistics, follow these steps:
+	 1) Set the environment variable =PARAVIEWPATH= to the path of Paraview on your system, i.e, 
+		to the directory of =pvpython=. For example if =pvpython= is in directory =/opt/paraview530/bin=, run:
+		#+BEGIN_EXAMPLE
+		export PARAVIEWPATH=/opt/paraview530/bin
+		#+END_EXAMPLE
+	 2) Archive the =model_stepX.inp= files: 
+		#+BEGIN_EXAMPLE
+		tar -cf model_step.tar  model_step?*.inp
+		#+END_EXAMPLE
+	 3) Run =utils/mexdex/extract.sh=: 
+		#+BEGIN_EXAMPLE
+		./utils/mexdex/extract.sh model_step.tar ccx-results.tar \
+		setting/mex/welding_anim.json results/ results/metrics.csv \
+		pass_coordinates.out 
+		#+END_EXAMPLE
+		The images, animations and =metrics.csv= file (with extracted statistics) will be written under the directory =results=
 
 * Footnotes
 

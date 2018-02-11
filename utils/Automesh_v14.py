@@ -34,7 +34,7 @@ parser.add_argument("--out_dir", default= "./",
 parser.add_argument("--log_dir", default= "./",
                     help='The log directory (default:"./")')
 
-parser.add_argument("--write_seperate_step_files", dest='write_separate_step_files',
+parser.add_argument("--write_separate_step_files", dest='write_separate_step_files',
                     action='store_true',
                     help='If set, the step for each welding pass (depositing, heating '
                          'and cooling steps) will be written into a separate '
@@ -44,7 +44,7 @@ parser.add_argument("--write_seperate_step_files", dest='write_separate_step_fil
 parser.add_argument("--write_single_step_file", dest='write_separate_step_files',
                     action='store_false',
                     help='If set, a single file  (model_step1.inp) will be writen for all '
-                         'the simulation steps (also see --write_seperate_step_files). '
+                         'the simulation steps (also see --write_separate_step_files). '
                          'This is the default ')
 
 parser.set_defaults(write_separate_step_files=False)

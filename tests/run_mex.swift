@@ -10,7 +10,7 @@ type file;
 string maxPasses2Run = "3";
 
 // workflow structure definitions:
-string inputDir           = "inputs/";
+string inputDir           = "tests/inputs/";
 string outDir             = "results/";
 string modelsDir          = "utils/";
 string settingsDir        = "setting/";

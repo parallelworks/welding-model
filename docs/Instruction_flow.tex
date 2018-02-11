@@ -1,4 +1,4 @@
-% Created 2018-01-30 Tue 13:54
+% Created 2018-02-11 Sun 16:01
 \documentclass[12pt,letterpaper]{article}
 \usepackage{graphicx,rotating,overpic,eepic,amssymb,amsmath,color,wasysym,hyperref,soul}
 %\usepackage[backend=biber,natbib=true,style=numeric,sorting=none,firstinits=true,maxbibnames=15]{biblatex}
@@ -63,16 +63,15 @@
 \usepackage{hyperref}
 \tolerance=1000
 % To change the background color of verbatim sections in latex
-\colorlet{LightSteelBlue10}{LightSteelBlue1!50}
+\colorlet{LightSteelBlue10}{LightSteelBlue1!30}
 \colorlet{SteelBlue40}{SteelBlue4!60!black}
 \newcommand{\verbStyle}[1]{{\color{SteelBlue40}\colorbox{LightSteelBlue10}{{#1}}}}
 \let\OldTexttt\texttt
 \renewcommand{\texttt}[1]{\OldTexttt{\verbStyle{#1}}}
-\author{Yu-Ping Yang}
-\date{December 20, 2017}
+\date{\today}
 \title{Instructions}
 \hypersetup{
- pdfauthor={Yu-Ping Yang},
+ pdfauthor={},
  pdftitle={Instructions},
  pdfkeywords={},
  pdfsubject={},
@@ -103,10 +102,11 @@
 \item Run \texttt{utils/Automesh\_v14.py} from SALOME's Python Console to create \texttt{Mesh\_3D.unv}, or run 
 without Salome GUI:
 \begin{verbatim}
-$SALOMEPATH/salome start -t -w 1 utils/Automesh_v14.py
+$SALOMEPATH/salome start -t -w 1 utils/Automesh_v14.py \
+--write_separate_step_files
 \end{verbatim}
 \begin{enumerate}
-\item The files will be input:
+\item The input files are:
 \begin{itemize}
 \item \texttt{./inputs/eweld.in}
 \item \texttt{./inputs/eweld\_weld\_parameters.in}
@@ -114,13 +114,23 @@ $SALOMEPATH/salome start -t -w 1 utils/Automesh_v14.py
 \item \texttt{./inputs/pass\_coordinates.out}
 \end{itemize}
 
-\item The files will be output: 
+\item The output files will be:
 \begin{itemize}
 \item \texttt{Mesh\_3D.unv}
 \item \texttt{model\_dflux.for}
 \item \texttt{model\_step1.inp}
+\item \texttt{model\_step2.inp}
+\item \texttt{model\_step3.inp}
+\item \texttt{model\_step4.inp}
+\item \texttt{model\_step5.inp}
+\item \texttt{model\_step6.inp}
+\item \texttt{model\_step7.inp}
 \end{itemize}
+\textbf{Note:} The \texttt{model\_step.inp} file has been broken into several files \\
+(\texttt{model\_stepX.inp}) to
+resolve and issue with post-processing of cases where elements get added during the simulation.
 \end{enumerate}
+
 \item Run \texttt{./utils/runCGX.sh} to generate the \texttt{nodesElems.inp} and \texttt{model\_film.in} files (using cgx and unical):
 \begin{verbatim}
 ./utils/runCGX.sh Mesh_3D.unv ./utils/write_film.fbd
@@ -130,14 +140,14 @@ $SALOMEPATH/salome start -t -w 1 utils/Automesh_v14.py
 python2 utils/Analysis_file_create.py
 \end{verbatim}
 \begin{itemize}
-\item The files will be input:
+\item The input files are:
 \begin{itemize}
 \item \texttt{./inputs/eweld.in}
 \item \texttt{./inputs/eweld\_boundary\_condition.in}
 \item \texttt{./inputs/eweld\_preheat\_interpass\_temperature.in}
 \item \texttt{./nodesElems.inp}
 \end{itemize}
-\item The files will be output:
+\item The output files will be: 
 \begin{itemize}
 \item \texttt{model\_bc.in}
 \item \texttt{model\_ini\_temperature.in}
@@ -150,7 +160,52 @@ Or decompress \texttt{tools/CalculiX-PW.tar} (works under Ubuntu 14.04, if all t
 \begin{verbatim}
 tar -xf tools/CalculiX-PW.tar
 \end{verbatim}
-\item Run \texttt{analysis.inp} with CalculiX
+\textbf{The script \texttt{./utils/compileCcx.sh} performs the above automatically on Ubuntu 14.04 if all required packages for compiling CalculiX are installed:}
+\begin{verbatim}
+./utils/compileCcx.sh model_dflux.for tools/CalculiX-PW.tar ccx_2.12_MT
+\end{verbatim}
+\item Run \texttt{analysis.inp} with CalculiX: 
+To get around an issue with post-processing of results in 
+cases with element addition/removal during simulation, we have
+divided the simulation into several steps. In each step, 
+the number of elements remain constant. To run the whole
+simulation, restart files written at the end of one step are
+used as a start point for the next step.  
+
+The bash script \texttt{./tests/runCCX\_manual.sh} runs the multiple simulation steps 
+consecutively. When running \texttt{./utils/runCCX\_manual.sh}, the number of processors can be specified
+(the default number of processors is 1):
+\begin{verbatim}
+./tests/runCCX_manual.sh  4
+\end{verbatim}
+The output exo, sta and cvg files with be compressed in \texttt{ccx-results.tar} after the simulations
+are complete.
+\item Post processing: 
+To post process the simulation results using Paraview, the Metrics Extraction Python 
+library can be used. The properties of image and metrics can be specified via a json file.
+An example json file is in \url{file:///setting/mex/welding_anim.json}. 
+For details of the json syntax please see \\
+\url{https://github.com/parallelworks/MetricExtraction}. 
+
+To generate images and animations and extract statistics, follow these steps:
+\begin{enumerate}
+\item Set the environment variable \texttt{PARAVIEWPATH} to the path of Paraview on your system, i.e, 
+to the directory of \texttt{pvpython}. For example if \texttt{pvpython} is in directory \texttt{/opt/paraview530/bin}, run:
+\begin{verbatim}
+export PARAVIEWPATH=/opt/paraview530/bin
+\end{verbatim}
+\item Archive the \texttt{model\_stepX.inp} files: 
+\begin{verbatim}
+tar -cf model_step.tar  model_step?*.inp
+\end{verbatim}
+\item Run \texttt{utils/mexdex/extract.sh}: 
+\begin{verbatim}
+./utils/mexdex/extract.sh model_step.tar ccx-results.tar \
+setting/mex/welding_anim.json results/ results/metrics.csv \
+pass_coordinates.out
+\end{verbatim}
+The images, animations and \texttt{metrics.csv} file (with extracted statistics) will be written under the directory \texttt{results}
+\end{enumerate}
 \end{enumerate}
 \end{itemize}
 \end{document}

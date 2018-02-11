@@ -7,3 +7,5 @@
 /run*/
 /swiftwork/
 *.kml
+/tmp/
+/results/
