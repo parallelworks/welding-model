@@ -17,6 +17,5 @@ file fmexLog              <strcat(mexLogsDir, "mex", i, ".out")>;
 // ------ App Definitions --------------------
 
 app (file fmexCsv, file[] fmexpngs, file ferr, file fout) runMex (file fsteps, file fccxResults, file fmex_kpi, string mexOutputDir, file fpassCoords, string maxPasses2Run, file[] mex_utils, file[] ccx_utils){
-	bash "./utils/mexdex/extract.sh" filename(fsteps) filename(fccxResults) filename(fmex_kpi) mexOutputDir filename(fmexCsv) filename(fpassCoords) maxPasses2Run stderr=filename(ferr) stdout=filename(fout);
+	bashMex "./utils/mexdex/extract.sh" filename(fsteps) filename(fccxResults) filename(fmex_kpi) mexOutputDir filename(fmexCsv) filename(fpassCoords) maxPasses2Run stderr=filename(ferr) stdout=filename(fout);
 }
-
