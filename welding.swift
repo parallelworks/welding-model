@@ -41,7 +41,7 @@ file CalculiX               <"tools/CalculiX-PW.tar">;
 
 app (file fpassCoords, file ferr, file fout) calcArcPasses (file feweldIn, file[] utils) {
 	chmod "+x" "./utils/determine_passes_arc_v4.out";
-	determine_arc_passes   strcat(dirname(fpassCoords),"/") stderr=filename(ferr) stdout=filename(fout);
+	determine_arc_passes filename(feweldIn) strcat(dirname(fpassCoords),"/") stderr=filename(ferr) stdout=filename(fout);
 }
 
 app (file fMeshUnv, file dfluxfile, file fsteps, file ferr, file fout) runAutoMesh (file feweldIn, file feweldParams, file farcEffcSetting, file fpassCoords, file[] utils){

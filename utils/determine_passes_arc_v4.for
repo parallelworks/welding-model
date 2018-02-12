@@ -10,14 +10,17 @@ c********************************************************************
       dimension area_layer(50),areaps(50,25)
       dimension pcent(50,25,2)
       
-      character(len=500) outDir
-      call get_output_path(outDir)
 
-      open(unit=10,file=trim(adjustl(outDir))//"pass_coordinates.out") 
+      character(len=500) eweldin      
+      character(len=500) outDir
+      
+      call parse_command_line_options(eweldin, outDir)
+     
+      open(unit=10,file=trim(adjustl(outDir))//"/pass_coordinates.out")
       open(unit=20,file=trim(adjustl(outDir))//"pass_area.out") 	
       open(unit=30,file=trim(adjustl(outDir))//"pass_center_area.out") 	
       
-      call eweld_input(th,vland,angle,gap,
+      call eweld_input(eweldin, th,vland,angle,gap,
      &     reinf,pene,ptclose,layer,npass)
 
       call corner_point(gap,reinf,pene,layer,vland,th,angle,ptl,ptm,ptr)
@@ -74,6 +77,28 @@ c********************************************************************
       
       end
 
+!------------------------------------------------------------------------------
+      subroutine parse_command_line_options(eweldin, outDir)
+!     Set eweldin input file and output directory from command line input
+      character(len=500) eweldin
+      character(len=500) outDir
+!     Check if any arguments are found
+      narg=command_argument_count()
+      if(narg>=1)then
+          call get_command_argument(1,eweldin)
+          eweldin = adjustl(eweldin)
+      else
+          eweldin = "./inputs/eweld.in"
+      end if
+      if (narg>=2) then
+          call get_command_argument(2,outDir)
+          outDir = adjustl(outDir)
+      else
+          ! write in the same directory          
+          outDir = "."
+      end if          
+      end      
+      
 !------------------------------------------------------------------------------
       subroutine get_output_path(outDir)
 !     Set output directory from command line input
@@ -478,13 +503,14 @@ C                  write(1100,'(3I2,2f15.6)') i,j,k,pcd(i,j,k,1),pcd(i,j,k,2)
       return      
       end
 !------------------------------------------------------------------------------
-      subroutine eweld_input(th,vland,angle,gap,
+      subroutine eweld_input(eweldin, th,vland,angle,gap,
      &     reinf,pene,ptclose,layer,npass)
       implicit real*8(a-h,o-z)
       CHARACTER*8 x_groove
-      dimension npass(50)	
+      dimension npass(50)
+      character(len=500) eweldin 
 
-      open(unit=2000,file="inputs/eweld.in",status='old')   
+      open(unit=2000,file=eweldin,status='old')   
       write(1100,'("*Plate length")')
       read(2000,*)
       read(2000,*) ttt
