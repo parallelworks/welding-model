@@ -1465,14 +1465,33 @@ main program
 def main():
 
     parser = argparse.ArgumentParser(
-        description='Create BC, element, group, init_temperature, material and node files for a welding case')
+        description='Create BC, element, group, init_temperature, material and node '
+                    'files for a welding case')
 
     parser.add_argument("--model_inp_file", default= "./nodesElems.inp",
                         help='The mesh file in .inp format (converted mesh from .unv by '
                              'unical) - default:"./nodesElems.inp"')
-    parser.add_argument("--inputs_dir", default= "./inputs",
-                        help='The directory that has the eweld.in, eweld_boundary_condition.in, '
-                        'and eweld_preheat_interpass_temperature.in files - default:"./inputs"')
+
+    # parser.add_argument("--inputs_dir", default= "./inputs",
+    #                     help='The directory that has the eweld.in, '
+    #                          'eweld_boundary_condition.in, and '
+    #                          'eweld_preheat_interpass_temperature.in files '
+    #                          '- default:"./inputs"')
+
+    parser.add_argument("--eweld_file", default="inputs/eweld.in",
+                        help='The input file specifying geometry, materials, type, ...'
+                             '(default:"./inputs/eweld.in")')
+
+    parser.add_argument("--eweld_BC_file", default="inputs/eweld_boundary_condition.in",
+                        help='The input file specifying boundary conditions '
+                             '(default:"./inputs/eweld_boundary_condition.in")')
+
+    parser.add_argument("--eweld_preheat_temp_file",
+                        default="inputs/eweld_preheat_interpass_temperature.in",
+                        help='The input file specifying preheat and interpass '
+                             'temperatures '
+                             '(default:"./inputs/eweld_preheat_interpass_temperature.in")')
+
 
     parser.add_argument("--out_dir", default= "./",
                         help='The output directory - default:"./"')
@@ -1502,7 +1521,10 @@ def main():
 
 
     args = parser.parse_args()
-    inputs_dir = args.inputs_dir
+    #    inputs_dir = args.inputs_dir
+    eweld_file = args.eweld_file
+    bc_file = args.eweld_BC_file
+    ini_file = args.eweld_preheat_temp_file
     out_dir = args.out_dir
     log_dir = args.log_dir
     write_element_files = args.write_element_files
@@ -1520,7 +1542,7 @@ def main():
     #--------------------------------------------------------------
     # Read eweld.in
     #
-    eweld_file = os.path.join(inputs_dir, "eweld.in")
+    # eweld_file = os.path.join(inputs_dir, "eweld.in")
 
     (numWeld,myMaterial1,myMaterial2,FillerMaterial)=read_eweld_in(eweld_file, logfile)
     #--------------------------------------------------------------
@@ -1528,7 +1550,7 @@ def main():
     # output model_ini_temperature.in
     #      
 
-    ini_file = os.path.join(inputs_dir, "eweld_preheat_interpass_temperature.in")
+    # ini_file = os.path.join(inputs_dir, "eweld_preheat_interpass_temperature.in")
     (preheat,interpass)=read_ini_in(ini_file, logfile)
 
     out_fname = os.path.join(out_dir, "model_ini_temperature.in")
@@ -1536,7 +1558,7 @@ def main():
     #--------------------------------------------------------------
     # Read eweld_boundary_conditions.in
     #      
-    bc_file = os.path.join(inputs_dir, "eweld_boundary_condition.in" )
+    # bc_file = os.path.join(inputs_dir, "eweld_boundary_condition.in" )
 
     (numfix,fix_cod,fix_dir)=read_bc_in(bc_file, logfile)
     #--------------------------------------------------------------

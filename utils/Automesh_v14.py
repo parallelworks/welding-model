@@ -23,6 +23,22 @@ import data_IO
 parser = argparse.ArgumentParser(
     description='Run under Salome to create the mesh, step file and dflux.f files for a welding case')
 
+parser.add_argument("--eweld_file", default= "inputs/eweld.in",
+                    help='The input file specifying geometry, materials, type, ...'
+                         '(default:"./inputs/eweld.in")')
+
+parser.add_argument("--temperature_monitor_file",
+                    default= "inputs/eweld_temperature_monitor",
+                    help='The input file specifying the points for monitoring '
+                         'temperature'
+                         '(default:"./inputs/eweld_temperature_monitor.in")')
+
+parser.add_argument("--weld_parameters_file",
+                    default= "inputs/eweld_weld_parameters.in",
+                    help='The input file specifying the power and speed of each weld pass '
+                         '(default:"./inputs/eweld_weld_parameters.in")')
+
+
 parser.add_argument("--weld_pass_coordinates_file", default= "inputs/pass_coordinates.out",
                     help='The file that has the weld pass coordinates'
                          '(default:"inputs/pass_coordinates.out")')
@@ -50,6 +66,10 @@ parser.add_argument("--write_single_step_file", dest='write_separate_step_files'
 parser.set_defaults(write_separate_step_files=False)
 
 args = parser.parse_args()
+
+eweld_file = args.eweld_file
+tc_file = args.temperature_monitor_file
+wp_file = args.weld_parameters_file
 write_separate_step_files = args.write_separate_step_files
 out_dir = args.out_dir
 log_dir = args.log_dir
@@ -141,7 +161,7 @@ def arc_efficiency(weld_type,vol):
 #-------------------------------------------------------------
 #--------------- Read eweld.in ------------------------------
 #-------------------------------------------------------------
-eweld_file = os.path.join(cwd,"inputs/eweld.in")
+# eweld_file = os.path.join(cwd,"inputs/eweld.in")
 filein = open(eweld_file, "r" )
 lines = filein.readlines()
 
@@ -447,7 +467,7 @@ wp_eff=[[],]*nweld
 
 logfile.write('Read Weld Parameters ' +'\n')
 
-wp_file = os.path.join(cwd,"inputs/eweld_weld_parameters.in")
+# wp_file = os.path.join(cwd,"inputs/eweld_weld_parameters.in")
 
 wp_data = open(wp_file, 'r')
 textLine = wp_data.readline()
@@ -1069,7 +1089,7 @@ if(os.path.isfile(cool_file)==True):
 #--Temperature monitoring locations---------
 # 
 
-tc_file = os.path.join(cwd,"inputs/eweld_temperature_monitor.in" )
+# tc_file = os.path.join(cwd,"inputs/eweld_temperature_monitor.in" )
 
 tc_pt = [[[],]*2]*100
 

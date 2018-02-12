@@ -22,7 +22,7 @@ file feweldIn             <arg("feweldIn",			strcat(inputDir, "eweld.in"))>;
 file feweldParams         <arg("feweldParams",		strcat(inputDir, "eweld_weld_parameters.in"))>;
 file feweldBC 		      <arg("feweldBC",			strcat(inputDir, "eweld_boundary_condition.in"))>;
 file feweldPreHeat 	      <arg("feweldPreHeat",		strcat(inputDir, "eweld_preheat_interpass_temperature.in"))>;
-file feweldTempMonitor 	  <arg("feweldTempMonitor",	strcat(inputDir, "eweld_temperature_monitor.in"))>;
+// file feweldTempMonitor 	  <arg("feweldTempMonitor",	strcat(inputDir, "eweld_temperature_monitor.in"))>;
 
 file farcEffcSetting      <strcat(settingsDir, "Setting_arc_efficiency_dfault.in")>;
 
@@ -45,7 +45,7 @@ app (file fpassCoords, file ferr, file fout) calcArcPasses (file feweldIn, file[
 }
 
 app (file fMeshUnv, file dfluxfile, file fsteps, file ferr, file fout) runAutoMesh (file feweldIn, file feweldParams, file farcEffcSetting, file fpassCoords, file[] utils){
-	bashSalome "./utils/runSalome.sh" dirname(fMeshUnv) dirname(fout) filename(fpassCoords) stderr=filename(ferr) stdout=filename(fout);
+	bashSalome "./utils/runSalome.sh" filename(feweldIn) filename(feweldParams) dirname(fMeshUnv) dirname(fout) filename(fpassCoords) stderr=filename(ferr) stdout=filename(fout);
 }
 
 app (file ffilm, file fMeshInp, file ferr, file fout) runCGX (file fMeshUnv, file fflimFbd, file[] utils, file[] tools){
@@ -53,7 +53,7 @@ app (file ffilm, file fMeshInp, file ferr, file fout) runCGX (file fMeshUnv, fil
 }
 
 app (file analysis_files, file ferr, file fout) createAnalysisFiles (file feweldIn, file feweldBC, file feweldPreHeat, file fMeshInp, file[] utils, file[] ccx_utils){
-	python2 "utils/Analysis_file_create.py" strcat("--model_inp_file=",filename(fMeshInp))  strcat("--log_dir=",dirname(fout)) strcat("--out_dir=",dirname(analysis_files)) stderr=filename(ferr) stdout=filename(fout);
+	python2 "utils/Analysis_file_create.py" strcat("--eweld_file=",filename(feweldIn)) strcat("--eweld_BC_file=",filename(feweldBC)) strcat("--eweld_preheat_temp_file=",filename(feweldPreHeat)) strcat("--model_inp_file=",filename(fMeshInp))  strcat("--log_dir=",dirname(fout)) strcat("--out_dir=",dirname(analysis_files)) stderr=filename(ferr) stdout=filename(fout);
 	tar "-cf"  filename(analysis_files) "-C" dirname(analysis_files) "model_bc.in" "model_ini_temperature.in" "model_material.in";
 }
 
