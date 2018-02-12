@@ -1484,6 +1484,7 @@ def main():
 
     parser.add_argument("--eweld_BC_file", default="inputs/eweld_boundary_condition.in",
                         help='The input file specifying boundary conditions '
+                             '(fixed points) '
                              '(default:"./inputs/eweld_boundary_condition.in")')
 
     parser.add_argument("--eweld_preheat_temp_file",

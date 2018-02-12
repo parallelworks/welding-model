@@ -24,6 +24,10 @@ file feweldBC 		      <arg("feweldBC",			strcat(inputDir, "eweld_boundary_condit
 file feweldPreHeat 	      <arg("feweldPreHeat",		strcat(inputDir, "eweld_preheat_interpass_temperature.in"))>;
 // file feweldTempMonitor 	  <arg("feweldTempMonitor",	strcat(inputDir, "eweld_temperature_monitor.in"))>;
 
+file mexCsvOut <arg("mexCsvOut","results/output.csv")>;
+
+// -------- Settings ----------------------
+
 file farcEffcSetting      <strcat(settingsDir, "Setting_arc_efficiency_dfault.in")>;
 
 file fmex_kpi             <strcat(mexSettings, "/welding_anim.json")>;
@@ -132,7 +136,7 @@ ccxResult_files[i] = fccxResult;
 file[] mexCsvFiles;
 string mexOutputDir       = strcat(caseOutDirs[i], "mex/");
 // Can I move these to lib/mex if I have a loop here?
-file mexCsvOut            <strcat(mexOutputDir, "metrics.csv")>;
+//file mexCsvOut            <strcat(mexOutputDir, "metrics.csv")>;
 file fmexPngs[]           <filesys_mapper;location=mexOutputDir>;
 //
 (mexCsvOut, fmexPngs, fmexErr, fmexLog) = runMex(step_files[i], ccxResult_files[i], fmex_kpi, mexOutputDir, passCoords_files[i], maxPasses2Run, mex_utils, ccx_utils);
