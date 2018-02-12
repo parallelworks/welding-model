@@ -65,6 +65,12 @@ app (file ccxResults, file ferr, file fout) runCCX (file fsteps, file analysis_f
 	bashRunCcx "./utils/runCCX.sh" filename(fsteps) filename(analysis_files) filename(ccxBin) filename(pass_coordinates) filename(ffilm) filename(fMeshInp) filename(ccxResults) numProcs maxPasses2Run stderr=filename(ferr) stdout=filename(fout);
 }
 
+// Add a dummy application function for the application bashMex to get detected/define resource on Parallel Works platform
+app (file fout) dummyMex (file fin){
+	bashMex filename(fout);
+}
+
+
 //----------------Workflow-------------------
 
 // Create the weld pass coordinates
