@@ -25,6 +25,7 @@ file feweldPreHeat 	      <arg("feweldPreHeat",		strcat(inputDir, "eweld_preheat
 // file feweldTempMonitor 	  <arg("feweldTempMonitor",	strcat(inputDir, "eweld_temperature_monitor.in"))>;
 
 file mexCsvOut <arg("mexCsvOut","results/output.csv")>;
+file mexPngsOut <arg("mexPngsOut","results/mex.tar")>;
 
 // -------- Settings ----------------------
 
@@ -133,11 +134,6 @@ file runCCXOut         <strcat(logsDir, "runCCX", i, ".out")>;
 (fccxResult, runCCXErr, runCCXOut) = runCCX (step_files[i], analysis_files[i], ccxExec_files[i], passCoords_files[i], film_files[i], meshInp_files[i], numProcs, maxPasses2Run, analysisFile, materials, utils, ccx_utils);
 ccxResult_files[i] = fccxResult;
 
-file[] mexCsvFiles;
 string mexOutputDir       = strcat(caseOutDirs[i], "mex/");
-// Can I move these to lib/mex if I have a loop here?
-//file mexCsvOut            <strcat(mexOutputDir, "metrics.csv")>;
 file fmexPngs[]           <filesys_mapper;location=mexOutputDir>;
-//
-(mexCsvOut, fmexPngs, fmexErr, fmexLog) = runMex(step_files[i], ccxResult_files[i], fmex_kpi, mexOutputDir, passCoords_files[i], maxPasses2Run, mex_utils, ccx_utils);
-mexCsvFiles[i] = mexCsvOut;
+(mexCsvOut, mexPngsOut, fmexPngs, fmexErr, fmexLog) = runMex(step_files[i], ccxResult_files[i], fmex_kpi, mexOutputDir, passCoords_files[i], maxPasses2Run, mex_utils, ccx_utils);
