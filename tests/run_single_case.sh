@@ -9,19 +9,19 @@ mkdir -p results/case_1/
 mkdir -p results/logFiles/
 
 # Create the pass_coordinates.out file:
-./utils/determine_passes_arc_v4.out  tests/inputs/weld/eweld.in results/case_1/
+./utils/determine_passes_arc_v4.out  inputs/test_run/eweld.in results/case_1/
 
 # Run Salome to creat the mesh (unv file):
-./utils/runSalome.sh tests/inputs/weld/eweld.in tests/inputs/weld/eweld_weld_parameters.in results/case_1/ results/logFiles results/case_1/pass_coordinates.out
+./utils/runSalome.sh inputs/test_run/eweld.in inputs/test_run/eweld_weld_parameters.in results/case_1/ results/logFiles results/case_1/pass_coordinates.out
 
 # Convert the unv files to CaluculiX/Abaqus format 
 ./utils/runCGX.sh results/case_1/Mesh_3D.unv utils/write_film.fbd results/case_1/model_film.in results/case_1/nodesElems.inp
 
 # Create CalculiX analysis files and archive them
 python2 utils/Analysis_file_create.py \
-	--eweld_file=tests/inputs/weld/eweld.in \
-	--eweld_BC_file=tests/inputs/weld/eweld_boundary_condition.in \
-	--eweld_preheat_temp_file=tests/inputs/weld/eweld_preheat_interpass_temperature.in \
+	--eweld_file=inputs/test_run/eweld.in \
+	--eweld_BC_file=inputs/test_run/eweld_boundary_condition.in \
+	--eweld_preheat_temp_file=inputs/test_run/eweld_preheat_interpass_temperature.in \
 	--model_inp_file=results/case_1/nodesElems.inp \
 	--log_dir=results/logFiles  \
 	--out_dir=results/case_1/ 

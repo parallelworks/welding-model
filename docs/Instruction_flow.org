@@ -18,13 +18,20 @@
   + =eweld_mesh_key.txt= (Not need to do now. This option will allow users to input their own meshes. )
 
 - For automatic mesh, the following steps will be run:
-  1. Check if =pass_coordinates.out= exists in =input= directory, if no, run \\ 
+  1. Copy the =.in= files from one of these two directories to =inputs/
+	 - Under =inputs/test_run=: Input files for a fast/test run
+	 - Under =inputs/long_run=: Input files for an actual V-Groove simulation which take much longer to run
+	 For a test/quick case run: 
+	 #+BEGIN_EXAMPLE
+	 cp inputs/test_run/*.in inputs/
+	 #+END_EXAMPLE
+  2. Check if =pass_coordinates.out= exists in =input= directory, if not, run \\
 	 =utils/determine_passes_arc_v4.exe= to create =inputs/pass_coordinates.out=[fn:1]:
 	 #+BEGIN_EXAMPLE
 	 ./utils/determine_passes_arc_v4.out inputs/
 	 #+END_EXAMPLE
 	 =eweld.in= will be input.
-  2. Run =utils/Automesh_v14.py= from SALOME's Python Console to create =Mesh_3D.unv=, or run 
+  3. Run =utils/Automesh_v14.py= from SALOME's Python Console to create =Mesh_3D.unv=, or run 
 	 without Salome GUI:
 	 #+BEGIN_EXAMPLE
 	 $SALOMEPATH/salome start -t -w 1 utils/Automesh_v14.py \
@@ -50,11 +57,11 @@
 		(=model_stepX.inp=) to
 		resolve and issue with post-processing of cases where elements get added during the simulation.
 		
-  3. Run =./utils/runCGX.sh= to generate the =nodesElems.inp= and =model_film.in= files (using cgx and unical):
+  4. Run =./utils/runCGX.sh= to generate the =nodesElems.inp= and =model_film.in= files (using cgx and unical):
 	 #+BEGIN_EXAMPLE
 	 ./utils/runCGX.sh Mesh_3D.unv ./utils/write_film.fbd 
 	 #+END_EXAMPLE
-  4. Run 
+  5. Run 
 	 #+BEGIN_EXAMPLE
 	 python2 utils/Analysis_file_create.py 
 	 #+END_EXAMPLE
@@ -67,7 +74,7 @@
 	   - =model_bc.in=
 	   - =model_ini_temperature.in=
 	   - =model_material.in=
-  5. Move =model_dflux.for= to the CalculiX directory (to =CalculiX-PW/src/=) and rename to =dflux.f=, and compile CalculiX
+  6. Move =model_dflux.for= to the CalculiX directory (to =CalculiX-PW/src/=) and rename to =dflux.f=, and compile CalculiX
 	 (see the notes in =CalculiX-PW/README.md= for compilation/installation of CalculiX).
 	 Or decompress =tools/CalculiX-PW.tar= (works under Ubuntu 14.04, if all the required packages for CalculiX are installed):
 	 #+BEGIN_EXAMPLE
@@ -77,7 +84,7 @@
 	 #+BEGIN_EXAMPLE
 	 ./utils/compileCcx.sh model_dflux.for tools/CalculiX-PW.tar ccx_2.12_MT  
 	 #+END_EXAMPLE
-  6. Run =analysis.inp= with CalculiX: 
+  7. Run =analysis.inp= with CalculiX: 
 	 To get around an issue with post-processing of results in 
 	 cases with element addition/removal during simulation, we have
 	 divided the simulation into several steps. In each step, 
@@ -93,7 +100,7 @@
 	 #+END_EXAMPLE
 	 The output exo, sta and cvg files with be compressed in =ccx-results.tar= after the simulations
 	 are complete.
-  7. Post processing: 
+  8. Post processing: 
 	 To post process the simulation results using Paraview, the Metrics Extraction Python 
 	 library can be used. The properties of image and metrics can be specified via a json file.
 	 An example json file is in [[/setting/mex/welding_anim.json]]. 

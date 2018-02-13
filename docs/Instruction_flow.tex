@@ -1,4 +1,4 @@
-% Created 2018-02-11 Sun 16:01
+% Created 2018-02-13 Tue 15:15
 \documentclass[12pt,letterpaper]{article}
 \usepackage{graphicx,rotating,overpic,eepic,amssymb,amsmath,color,wasysym,hyperref,soul}
 %\usepackage[backend=biber,natbib=true,style=numeric,sorting=none,firstinits=true,maxbibnames=15]{biblatex}
@@ -93,7 +93,16 @@
 
 \item For automatic mesh, the following steps will be run:
 \begin{enumerate}
-\item Check if \texttt{pass\_coordinates.out} exists in \texttt{input} directory, if no, run \\
+\item Copy the \texttt{.in} files from one of these two directories to =inputs/
+\begin{itemize}
+\item Under \texttt{inputs/test\_run}: Input files for a fast/test run
+\item Under \texttt{inputs/long\_run}: Input files for an actual V-Groove simulation which take much longer to run
+\end{itemize}
+For a test/quick case run: 
+\begin{verbatim}
+cp inputs/test_run/*.in inputs/
+\end{verbatim}
+\item Check if \texttt{pass\_coordinates.out} exists in \texttt{input} directory, if not, run \\
 \texttt{utils/determine\_passes\_arc\_v4.exe} to create \texttt{inputs/pass\_coordinates.out}\footnote{On Linux, compile \texttt{determine\_passes\_arc\_v4.out}, to get \texttt{determine\_passes\_arc\_v4.out} via \texttt{gfortran determine\_passes\_arc\_v4.for -o determine\_passes\_arc\_v4.out}}:
 \begin{verbatim}
 ./utils/determine_passes_arc_v4.out inputs/

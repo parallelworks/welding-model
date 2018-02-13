@@ -1,4 +1,5 @@
 import "stdlib.v2";
+import "lib/strFunctions";
 import "lib/mex";
 
 type file;
@@ -10,7 +11,15 @@ string numProcs = arg("ProcessorsPerRun", "4");
 // Only for testing
 string maxPasses2Run = arg("maxPasses2Run","3");
 
-string inputDir           = "inputs/";
+boolean testRun = str2bool(arg("test_run","true"));            
+string inputDir;
+if (testRun) {
+	inputDir           = "inputs/test_run/";
+}
+else{
+	 inputDir           = "inputs/long_run/";
+}
+
 string outDir             = "results/";
 string modelsDir          = "utils/";
 string settingsDir        = "setting/";
