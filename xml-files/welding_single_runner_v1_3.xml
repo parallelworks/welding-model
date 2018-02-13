@@ -10,13 +10,13 @@
 	    </param>
 	    <param name='feweldBC' type='data' format='in' label='eweld_boundary_condition.in fille (in)' help='Please upload your custom eweld_boundary_condition.in file here to specify the fixed points.'>
 	    </param>
-	    <param name='feweldPreHeat' type='data' format='in' label='eweld_preheat_interpass_temperature.in fille (in)' help='Please upload your custom eweld_preheat_interpass_temperature.in file here to specif preheat and interpass temperatures.'>
+	    <param name='feweldPreHeat' type='data' format='in' label='eweld_preheat_interpass_temperature.in fille (in)' help='Please upload your custom eweld_preheat_interpass_temperature.in file here to specify preheat and interpass temperatures.'>
 	    </param>
     </section>	    
     <section name='runParams' type='section' title='Run parameters' expanded='true'>
-	    <param name='ProcessorsPerRun' type='integer' label ='Number of processors per each CalculiX run' min='1' max='64' value='4' help='Please set the number of processors for each CalculiX run (please check resource machine type to ensure taht the selected number of processers are less or equal to the number of available processors on each machine.' >
+	    <param name='ProcessorsPerRun' type='integer' label ='Number of processors per each CalculiX run' min='1' max='64' value='4' help='Please set the number of processors for each CalculiX run (please check resource machine type to ensure that the selected number of processers are less or equal to the number of available processors on each machine.)' >
 	    </param>
-	    <param name='maxPasses2Run' type='integer' label='Maximum number of weld passes to simulate' min='1' max='100' value='100' help='Please set the maximum number of weld passes to simulate. e. Set this parameter to small values for testing. For actual runs, selecting a large number ensures that all the simulations are completed to the end.' >
+	    <param name='maxPasses2Run' type='integer' label='Maximum number of weld passes to simulate' min='1' max='100' value='100' help='Please set the maximum number of weld passes to simulate. Set this parameter to small values for testing. For actual runs, selecting a large number ensures that all the simulations are completed to the end.' >
 	    </param>
     </section>
   </inputs>

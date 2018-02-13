@@ -40,7 +40,7 @@ file materials[] 		    <filesys_mapper;location="material", pattern="?*.in">;
 file utils[] 		        <filesys_mapper;location=modelsDir, pattern="?*.*">;
 file tools[] 		        <filesys_mapper;location="tools", pattern="?*">;
 
-file CalculiX               <"tools/CalculiX-PW.tar">;
+file CalculiX               <"tools/CalculiX-PW.tgz">;
 
 // ------ App Definitions --------------------
 
