@@ -1,0 +1,115 @@
+sites: [gcepoolwelding]
+
+site.gcepoolwelding {
+ execution {
+    type: "coaster-persistent"
+    URL: "http://go.parallel.works:9007"
+ }
+ staging: local
+ initialParallelTasks: 999999
+ maxParallelTasks: 999999
+ workDirectory: "/tmp/swiftwork"
+ app.ALL {
+    env {
+
+    }
+    executable: "*"
+ }
+ app.determine_arc_passes {
+    executable: "./utils/determine_passes_arc_v4.out"
+    maxWallTime: "01:00:00"
+    exclusive: true
+    options {
+       docker {
+         image: "parallelworks/calculix:v2.12_rootuser"
+         jobDirMountPoint: "/scratch"
+         registry: "docker.io"
+         alwaysPull: true
+       }
+    }
+ }
+ app.bashSalome {
+    executable: "/bin/bash"
+    maxWallTime: "01:00:00"
+    exclusive: true
+    options {
+       docker {
+         image: "parallelworks/salome:v8_2_rootuser"
+         jobDirMountPoint: "/scratch"
+         registry: "docker.io"
+         alwaysPull: true
+       }
+    }
+ }
+ app.bashCGX {
+    executable: "/bin/bash"
+    maxWallTime: "01:00:00"
+    exclusive: true
+    options {
+       docker {
+         image: "parallelworks/calculix:v2.12_rootuser"
+         jobDirMountPoint: "/scratch"
+         registry: "docker.io"
+         alwaysPull: true
+       }
+    }
+ }
+ app.python2 {
+    executable: "python2"
+    maxWallTime: "01:00:00"
+    exclusive: true
+    options {
+       docker {
+         image: "python:2.7-slim"
+         jobDirMountPoint: "/scratch"
+         registry: "docker.io"
+         alwaysPull: true
+       }
+    }
+ }
+ app.bashCompileCcx {
+    executable: "/bin/bash"
+    maxWallTime: "01:00:00"
+    exclusive: true
+    options {
+       docker {
+         image: "parallelworks/calculix:v2.12_rootuser"
+         jobDirMountPoint: "/scratch"
+         registry: "docker.io"
+         alwaysPull: true
+       }
+    }
+ }
+ app.bashRunCcx {
+    executable: "/bin/bash"
+    maxWallTime: "01:00:00"
+    exclusive: true
+    options {
+       docker {
+         image: "parallelworks/calculix:v2.12_rootuser"
+         jobDirMountPoint: "/scratch"
+         registry: "docker.io"
+         alwaysPull: true
+       }
+    }
+ }
+ app.bashMex {
+    executable: "/bin/bash"
+    maxWallTime: "01:00:00"
+    exclusive: true
+    options {
+       docker {
+         image: "parallelworks/paraview:v5_4u_imgmagick_rootUser"
+         jobDirMountPoint: "/scratch"
+         registry: "docker.io"
+         alwaysPull: true
+       }
+    }
+ }
+}
+
+lazyErrors: true
+executionRetries: 0
+keepSiteDir: false
+providerStagingPinSwiftFiles: false
+alwaysTransferWrapperLog: true
