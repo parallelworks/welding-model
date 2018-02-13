@@ -7,5 +7,5 @@
 # Trim a suffix from a file path: basically trim anything after the last "." in the string
 (string nameNoSuffix) trimSuffix (string nameWithSuffix){
    int suffixStartLoc = lastIndexOf(nameWithSuffix, ".", -1);
-   nameNoSuffix = substring(nameWithSuffix, 0, suffixStartLoc); 
+   nameNoSuffix = substring(nameWithSuffix, 0, suffixStartLoc);
 }
