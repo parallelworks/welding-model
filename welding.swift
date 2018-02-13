@@ -30,7 +30,7 @@ file mexCsvOut <arg("mexCsvOut","results/output.csv")>;
 
 file farcEffcSetting      <strcat(settingsDir, "Setting_arc_efficiency_dfault.in")>;
 
-file fmex_kpi             <strcat(mexSettings, "/welding_anim.json")>;
+file fmex_kpi             <strcat(mexSettings, "/welding.json")>;
 
 file analysisFile           <"analysis.inp">;
 file ffilmFbd               <"utils/write_film.fbd">;
