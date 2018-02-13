@@ -39,7 +39,7 @@ file materials[] 		    <filesys_mapper;location="material", pattern="?*.in">;
 file utils[] 		        <filesys_mapper;location=modelsDir, pattern="?*.*">;
 file tools[] 		        <filesys_mapper;location="tools", pattern="?*">;
 
-file CalculiX               <"tools/CalculiX-PW.tar">;
+file CalculiX               <"tools/CalculiX-PW.tgz">;
 
 // ------ App Definitions --------------------
 
@@ -135,9 +135,6 @@ ccxResult_files[i] = fccxResult;
 
 file[] mexCsvFiles;
 string mexOutputDir       = strcat(caseOutDirs[i], "mex/");
-// Can I move these to lib/mex if I have a loop here?
-//file mexCsvOut            <strcat(mexOutputDir, "metrics.csv")>;
 file fmexPngs[]           <filesys_mapper;location=mexOutputDir>;
-//
 (mexCsvOut, fmexPngs, fmexErr, fmexLog) = runMex(step_files[i], ccxResult_files[i], fmex_kpi, mexOutputDir, passCoords_files[i], maxPasses2Run, mex_utils, ccx_utils);
 mexCsvFiles[i] = mexCsvOut;
