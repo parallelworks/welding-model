@@ -11,6 +11,7 @@ string numProcs = arg("ProcessorsPerRun", "4");
 // Only for testing
 string maxPasses2Run = arg("maxPasses2Run","3");
 
+// Pick input files depending on this is a test run or not:
 boolean testRun = str2bool(arg("test_run","true"));            
 string inputDir;
 if (testRun) {
