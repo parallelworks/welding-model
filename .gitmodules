@@ -3,4 +3,4 @@
 	url = https://github.com/parallelworks/CalculiX-PW.git 
 [submodule "mexdex"]
 	path = utils/mexdex
-	url = git@github.com:parallelworks/mexdex.git
+	url = https://github.com/parallelworks/mexdex.git
