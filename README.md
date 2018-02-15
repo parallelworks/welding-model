@@ -10,7 +10,15 @@ In this workflow, which is implemented in [Swift](http://swift-lang.org/main/):
 -   The thrmomechanical simulation of the welding process is performed with the open source [CalculiX FEA solver](http://www.dhondt.de/) (version 2.12)
 -   Post-processing is performed using [ParaView](https://www.paraview.org/) and a [python library](https://github.com/parallelworks/MetricExtraction) developed by Parallel Works for automated generation of output images and metrics extraction.
 
-This repository contains the modules for automatically creating the files required for simulating a welding case by CalculiX. The modules create geometry, mesh files, convert them to CalculiX input format, create CalculiX input files, and CalculiX user defined heat source file, `dflux.f` for defining the heat source for welding steps, compile and run multi-threaded CalculiX, and post-process the results using ParaView and a python library. The steps of the workflow are detailed in `docs/Instruction_flow.pdf`.
+This repository contains the modules for automatically creating the files required for simulating a welding case by CalculiX. The workflow involves the following steps:
+
+-   Calculate the weld pass coordinates based on user inputs (`calcArcPasses`)
+-   Create geometry and mesh (unv) files using Salome. In this step the user defined file for defining the weld heat source, `dflux.f`, is also created (`runAutoMesh`)
+-   Convert unv mesh files to CalculiX/Abaqus input format using cgx and unical (`runCGX`)
+-   Create CalculiX analysis files and the based on user inputs (`createAnalysisFiles`)
+-   Compile CalculiX with the user defined file for weld heat source, `dflux.f` (`complileCcx`)
+-   Run CalculiX (`runCCX`)
+-   Post-process results using ParaView and a python library (`runMex`) The steps of the workflow are detailed in `docs/Instruction_flow.pdf`.
 
 Instructions
 ------------
