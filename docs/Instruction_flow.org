@@ -28,6 +28,7 @@
   2. Check if =pass_coordinates.out= exists in =input= directory, if not, run \\
 	 =utils/determine_passes_arc_v4.exe= to create =inputs/pass_coordinates.out=[fn:1]:
 	 #+BEGIN_EXAMPLE
+	 mkdir -p results/case_1/
 	 ./utils/determine_passes_arc_v4.out inputs/
 	 #+END_EXAMPLE
 	 =eweld.in= will be input.

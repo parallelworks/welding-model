@@ -23,11 +23,29 @@ This repository contains the modules for automatically creating the files requir
 Instructions
 ------------
 
-To run the workflow, upload/select the input files in the input form. The input files specify:
+### Running the workflow from on Parallel Works platform
+
+To run the workflow in Parallel Works, upload/select the input files in the input form. The input files specify:
 
 -   Geometry, materials, type, ... (e.g., `eweld.in`)
 -   The power and speed of each weld pass (e.g., `eweld_weld_parameters.in`)
 -   Boundary conditions, i.e., fixed points and directions (e.g., see `eweld_boundary_condition.in` file)
 -   Preheat and interpass temperatures (e.g., `eweld_boundary_condition.in` file)
 
-Sample input files are uploaded in the workspace and can also be found in `inputs/` directory (for larger jobs), and under `tests/inputs/weld/` directory (for fast running tests).
+Sample input files under `inputs/long_run` directory (for larger jobs), and under `inputs/test_run` directory (for fast running tests).
+
+### Running the workflow from command line:
+
+The main swift script for the welding model workflow is `welding.swift` file.
+
+-   Before running the workflow, start the coaster service via `pworks` command with two workers:
+
+    ``` example
+    pworks cluster 2 
+    ```
+
+-   To run the `welding.swift` workflow, run this command from the workflow directory:
+
+    ``` example
+    swift welding.swift
+    ```
