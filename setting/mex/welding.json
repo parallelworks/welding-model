@@ -28,7 +28,7 @@
 	"domainU": {
 		"field": "U",
 		"colorByField" : "NT",
-		"representationType" : "Wireframe",
+		"representationType" : "Surface With Edges",
 		"image": "iso-TN",
 		"imageTimes": "{:f}",
 		"extractStatsTimes": "{:f}",
